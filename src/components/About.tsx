@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Star, Globe, Clock } from "lucide-react";
-import pastorImage from "@/assets/pastor-michael.png";
+import pastorImage from "@/assets/pastor-michael.jpg";
 
 const About = () => {
   return (
