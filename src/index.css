@@ -114,11 +114,27 @@ All colors MUST be HSL. Inspiring warm colors with spiritual depth.
 
 @layer components {
   .hero-title {
-    @apply text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight font-serif;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    @apply text-4xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif;
+    /* Orange fill using brand color */
+    color: hsl(var(--primary-glow));
+    -webkit-text-fill-color: hsl(var(--primary-glow));
+    /* White outline - ultra thin 0.25px */
+    -webkit-text-stroke: 0.25px #ffffff; /* Chrome, Edge, Safari */
+    text-stroke: 0.25px #ffffff; /* Spec fallback */
+    /* Outline fallback for Firefox (fractional offsets) + soft orange glow */
+    text-shadow:
+      /* outline */
+      0.25px 0 0 #ffffff,
+      -0.25px 0 0 #ffffff,
+      0 0.25px 0 #ffffff,
+      0 -0.25px 0 #ffffff,
+      0.25px 0.25px 0 #ffffff,
+      -0.25px 0.25px 0 #ffffff,
+      0.25px -0.25px 0 #ffffff,
+      -0.25px -0.25px 0 #ffffff,
+      /* soft glow */
+      0 0 18px hsl(var(--primary-glow) / 0.6),
+      0 0 8px hsl(var(--primary-glow) / 0.45);
   }
   
   .section-title {

@@ -10,7 +10,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "Our Location",
-      details: ["123 Faith Avenue", "Gospel City, GC 12345", "United States"],
+      details: ["Our Location", "Home school Avenue", "Red cross Kwamba", "Niger state"],
       action: "Get Directions"
     },
     {
@@ -28,7 +28,11 @@ const Contact = () => {
     {
       icon: Clock,
       title: "Service Times",
-      details: ["Sunday Worship: 10:00 AM", "Wednesday Prayer: 6:00 PM", "Friday Youth: 7:00 PM"],
+      details: [
+        "Sunday Worship: Doors open 8:00 AM, Sunday School, Service starts 9:00 AM",
+        "Wednesday Service: Doors open 5:30 PM, Service starts 6:00 PM",
+        "Friday Service: Doors open 5:30 PM, Service starts 6:00 PM"
+      ],
       action: "View Schedule"
     }
   ];
@@ -183,11 +187,10 @@ const Contact = () => {
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold mb-4">Planning Your First Visit?</h3>
               <div className="space-y-3 text-muted-foreground">
-                <p>• Service starts promptly at 10:00 AM every Sunday</p>
+                <p>• Doors open 8:00 AM; Sunday School; Service starts 9:00 AM on Sundays</p>
                 <p>• Casual or formal dress - come as you are!</p>
                 <p>• Free parking available on-site and nearby streets</p>
-                <p>• Children's ministry available during service</p>
-                <p>• Stay for fellowship and refreshments after service</p>
+                {/* Removed children ministry and fellowship notes as requested */}
               </div>
               <Button className="btn-secondary mt-4">
                 New Visitor Information

@@ -29,9 +29,8 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">VABT</span>
-            </div>
+            {/* Replaced text badge with image logo from public folder */}
+            <img src="/logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
             <span className="text-xl font-bold text-foreground">Voice Angel Bride Tabernacle</span>
           </div>
 

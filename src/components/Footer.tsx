@@ -13,9 +13,6 @@ const Footer = () => {
 
   const ministryLinks = [
     { label: "Youth Ministry", href: "#ministries" },
-    { label: "Women's Ministry", href: "#ministries" },
-    { label: "Men's Ministry", href: "#ministries" },
-    { label: "Children's Ministry", href: "#ministries" },
     { label: "Prayer Ministry", href: "#ministries" }
   ];
 
@@ -34,9 +31,8 @@ const Footer = () => {
           {/* Church Information */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">VABT</span>
-              </div>
+              {/* Replaced text badge with logo image */}
+              <img src="/logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
               <div>
                 <h3 className="font-bold text-lg">Voice Angel Bride</h3>
                 <p className="text-sm text-background/80">Tabernacle Ministries</p>
@@ -51,11 +47,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-background/80">
                 <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">123 Faith Avenue, Gospel City, GC 12345</span>
+                <span className="text-sm">Our Location, Home school Avenue, Red cross Kwamba, Niger state</span>
               </div>
               <div className="flex items-center space-x-3 text-background/80">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">(555) 123-4567</span>
+                <span className="text-sm">+2348141717651</span>
               </div>
               <div className="flex items-center space-x-3 text-background/80">
                 <Mail className="w-4 h-4 flex-shrink-0" />
@@ -143,9 +139,9 @@ const Footer = () => {
             <div className="text-center md:text-left">
               <h4 className="font-semibold mb-2">Join Us for Worship</h4>
               <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-1 sm:space-y-0 text-background/80 text-sm">
-                <span>Sunday Service: 10:00 AM</span>
-                <span>Wednesday Prayer: 6:00 PM</span>
-                <span>Friday Youth: 7:00 PM</span>
+                <span>Sunday: Doors open 8:00 AM; Service starts 9:00 AM</span>
+                <span>Wednesday: Doors open 5:30 PM; Service starts 6:00 PM</span>
+                <span>Friday: Doors open 5:30 PM; Service starts 6:00 PM</span>
               </div>
             </div>
             <Button 
@@ -162,7 +158,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-background/80 text-sm">
             <div className="flex items-center space-x-2">
               <Heart className="w-4 h-4 text-primary" />
-              <span>© 2024 Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
+              <span>© 2025 Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
             </div>
             
             <div className="flex space-x-6">

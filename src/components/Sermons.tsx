@@ -10,7 +10,7 @@ const Sermons = () => {
       date: "December 15, 2024",
       duration: "45 min",
       description: "Understanding the divine revelations contained in the seven seals and their significance for the bride church.",
-      thumbnail: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=225&fit=crop&crop=center",
+      thumbnail: "/Huffman christ.jpg", // updated per request
       videoUrl: "#"
     },
     {
@@ -19,7 +19,7 @@ const Sermons = () => {
       date: "December 8, 2024", 
       duration: "52 min",
       description: "Exploring Revelation 10:7 and the ministry of God's end-time messenger William Marion Branham.",
-      thumbnail: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=225&fit=crop&crop=center",
+      thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=225&fit=crop&crop=center",
       videoUrl: "#"
     },
     {
@@ -28,26 +28,8 @@ const Sermons = () => {
       date: "December 1, 2024",
       duration: "38 min", 
       description: "The Malachi 4 promise and restoring the apostolic faith of the fathers to this generation.",
-      thumbnail: "https://images.unsplash.com/photo-1438032005730-c779502df39b?w=400&h=225&fit=crop&crop=center",
+      thumbnail: "https://images.unsplash.com/photo-1501696461415-6bd6660c6742?w=400&h=225&fit=crop&crop=center",
       videoUrl: "#"
-    }
-  ];
-
-  const podcasts = [
-    {
-      title: "Daily Devotions with Pastor Michael",
-      description: "Start your day with inspiring words from God's messenger",
-      episodes: 127
-    },
-    {
-      title: "End Time Revelations",
-      description: "Deep dive into prophetic teachings and Bible mysteries",
-      episodes: 89
-    },
-    {
-      title: "Apostolic Faith Series",
-      description: "Foundational teachings on original apostolic beliefs",
-      episodes: 156
     }
   ];
 
@@ -106,32 +88,6 @@ const Sermons = () => {
                       <Download className="w-4 h-4" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Podcast Section */}
-        <div className="bg-muted rounded-2xl p-8">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-4">Podcast Series</h3>
-            <p className="text-muted-foreground">Listen anytime, anywhere to life-transforming teachings</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {podcasts.map((podcast, index) => (
-              <Card key={index} className="card-hover bg-card">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Play className="w-8 h-8 text-primary-foreground" />
-                  </div>
-                  <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
-                  <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
-                  <div className="text-primary font-semibold mb-4">{podcast.episodes} Episodes</div>
-                  <Button className="btn-secondary w-full">
-                    Listen Now
-                  </Button>
                 </CardContent>
               </Card>
             ))}

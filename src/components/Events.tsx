@@ -25,18 +25,18 @@ const Events = () => {
       description: "Come together for powerful intercession and seeking God's face for revival and breakthrough.",
       category: "Prayer",
       recurring: true,
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop&crop=center"
+      image: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400&h=200&fit=crop&crop=center"
     },
     {
       id: 3,
-      title: "End Time Prophetic Conference",
-      date: "January 15-17, 2025",
+      title: "Easter Convention 2026",
+      date: "April 3-5, 2026",
       time: "9:00 AM - 6:00 PM",
       location: "Conference Center",
-      description: "Three days of intensive teaching on end-time revelations and the mysteries of the seven seals.",
+      description: "Three days of resurrection power, apostolic teaching, and end-time revival meetings.",
       category: "Conference",
       recurring: false,
-      image: "https://images.unsplash.com/photo-1515169067868-5387ec336d88?w=400&h=200&fit=crop&crop=center"
+      image: "/Supernatural cloud.jpg"
     },
     {
       id: 4,
@@ -51,22 +51,22 @@ const Events = () => {
     },
     {
       id: 5,
-      title: "Women's Ministry Retreat",
-      date: "February 8-9, 2025",
+      title: "Bukuru convention coming december",
+      date: "December 15-17, 2025",
       time: "All Day Event",
-      location: "Retreat Center",
-      description: "A weekend of spiritual renewal, teaching, and fellowship for all women in the church.",
-      category: "Ministry",
+      location: "Convention Center",
+      description: "A powerful three-day convention with anointed preaching, worship, and fellowship for spiritual renewal.",
+      category: "Convention",
       recurring: false,
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=200&fit=crop&crop=center"
+      image: "/Supernatural cloud huffman.jpg"
     },
     {
       id: 6,
-      title: "Community Outreach Program",
+      title: "Evengalical Outreach Program",
       date: "January 25, 2025",
       time: "10:00 AM - 4:00 PM",
       location: "Community Center",
-      description: "Reaching out to our community with love, food distribution, and prayer ministry.",
+      description: "Reaching out to our community with the gospel message, love, food distribution, and prayer ministry.",
       category: "Outreach",
       recurring: false,
       image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=200&fit=crop&crop=center"
@@ -160,34 +160,30 @@ const Events = () => {
           <div className="text-center">
             <h3 className="text-2xl font-bold mb-4">Special Announcement</h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-3xl mx-auto">
-              We're excited to announce our upcoming <strong>End Time Prophetic Conference</strong> 
-              featuring special guest ministers who will bring fresh revelations from God's word. 
-              This promises to be a life-changing gathering you don't want to miss!
+              Bukuru Youth meetings hold on <strong>September 5th, 2025</strong>. Pray with us and plan to attend. God bless you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="btn-primary">
-                Register for Conference
+                Add to Calendar
               </Button>
               <Button variant="outline" className="btn-secondary">
-                View Full Calendar
+                Share Announcement
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Weekly Schedule */}
+        {/* Weekly Prayer Schedule */}
         <div className="mt-16">
-          <h3 className="text-2xl font-bold text-center mb-8">Weekly Schedule</h3>
+          <h3 className="text-2xl font-bold text-center mb-8">Weekly prayer Schedule</h3>
           <div className="bg-card rounded-2xl p-6 shadow-lg max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-7 gap-4">
+            <div className="grid md:grid-cols-5 gap-4">
               {[
-                { day: "Sunday", events: ["Worship Service 10:00 AM"] },
-                { day: "Monday", events: ["Church Office Hours"] },
-                { day: "Tuesday", events: ["Elder's Meeting 7:00 PM"] },
-                { day: "Wednesday", events: ["Prayer Meeting 6:00 PM"] },
-                { day: "Thursday", events: ["Bible Study 7:00 PM"] },
-                { day: "Friday", events: ["Youth Fellowship 7:00 PM"] },
-                { day: "Saturday", events: ["Community Outreach"] }
+                { day: "Monday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
+                { day: "Tuesday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
+                { day: "Thursday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
+                { day: "Friday", events: ["Night Watch 9:00 PM"] },
+                { day: "Saturday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] }
               ].map((schedule, index) => (
                 <div key={index} className="text-center p-4 rounded-lg hover:bg-muted/50 transition-colors">
                   <h4 className="font-semibold text-primary mb-2">{schedule.day}</h4>
