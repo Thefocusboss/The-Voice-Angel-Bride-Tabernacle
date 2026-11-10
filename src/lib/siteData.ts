@@ -8,7 +8,6 @@ export interface MorningTonicPostItem {
   description: string;
   date: string;
   image: string;
-  link?: string;
 }
 
 export interface MorningTonicItem {
@@ -163,7 +162,6 @@ export const defaultSiteData: SiteData = {
         description: "Grow closer to God every day with Voice Angel Bride Tabernacle, Suleja.",
         date: "November 10, 2026",
         image: "/morning-tonic-post.jpg",
-        link: TELEGRAM_PAGE_URL,
       },
     ],
     telegramHeading: "Play from Telegram",
@@ -312,7 +310,6 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
         (post: MorningTonicPostItem) => ({
           ...post,
           date: post.date ?? "November 10, 2026",
-          link: post.link || TELEGRAM_PAGE_URL,
         })
       ),
       telegramHeading:

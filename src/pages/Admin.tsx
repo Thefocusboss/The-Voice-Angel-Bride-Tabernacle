@@ -7,7 +7,6 @@ import {
   LiveServiceItem,
   getYouTubeThumbnailUrl,
   getFormattedToday,
-  TELEGRAM_PAGE_URL,
 } from "@/lib/siteData";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -246,7 +245,6 @@ const Admin = () => {
       description: "Grow closer to God every day with Voice Angel Bride Tabernacle.",
       date: getFormattedToday(),
       image: "/morning-tonic-post.jpg",
-      link: TELEGRAM_PAGE_URL,
     };
     setDraft((prev) => ({
       ...prev,
@@ -1017,18 +1015,6 @@ const Admin = () => {
                                 updateTonicPost(index, { description: e.target.value })
                               }
                               rows={2}
-                            />
-                          </div>
-                          <div className="space-y-1.5">
-                            <Label className="flex items-center gap-1.5">
-                              <Link2 className="w-3.5 h-3.5 text-primary" />
-                              Telegram Page Link (Attached on Share)
-                            </Label>
-                            <Input
-                              type="url"
-                              placeholder="https://t.me/..."
-                              value={post.link || ""}
-                              onChange={(e) => updateTonicPost(index, { link: e.target.value })}
                             />
                           </div>
                           <div className="space-y-1.5">

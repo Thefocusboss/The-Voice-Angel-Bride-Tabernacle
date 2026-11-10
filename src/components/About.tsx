@@ -34,20 +34,18 @@ const About = () => {
   const handleSharePost = (post: MorningTonicPostItem) => {
     const title = post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle";
     const datePrefix = post.date ? `[${post.date}] ` : "";
-    const telegramPageUrl = post.link?.trim() || TELEGRAM_PAGE_URL;
     const text = post.description
-      ? `${datePrefix}${title}\n${post.description}\nJoin our Telegram Page:`
-      : `${datePrefix}${title} - Voice Angel Bride Tabernacle\nJoin our Telegram Page:`;
+      ? `${datePrefix}${title}\n${post.description}`
+      : `${datePrefix}${title} - Voice Angel Bride Tabernacle`;
     return shareWithThumbnail({
       title,
       text,
       shareType: "post",
       itemId: post.id,
       fallbackPath: "/#about",
-      overrideUrl: telegramPageUrl,
       imageUrl: post.image,
       fileName: `morning-tonic-post-${post.id}`,
-      copySuccessMessage: "Morning Tonic post & Telegram link copied!",
+      copySuccessMessage: "Morning Tonic post link copied to clipboard!",
     });
   };
 
