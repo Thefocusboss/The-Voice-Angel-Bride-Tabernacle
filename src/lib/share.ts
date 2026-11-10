@@ -12,14 +12,36 @@ export interface SharePayload {
   copySuccessMessage?: string;
 }
 
+const dataUrlToFile = (dataUrl: string, fileName: string): File | null => {
+  try {
+    const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if (!match) return null;
+    const mimeType = match[1];
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    const ext = mimeType.split("/")[1]?.split("+")[0] || "jpg";
+    const safeName = fileName.endsWith(`.${ext}`) ? fileName : `${fileName}.${ext}`;
+    return new File([bytes], safeName, { type: mimeType });
+  } catch {
+    return null;
+  }
+};
+
 const fetchImageAsFile = async (
   imageUrl: string,
   fileName: string
 ): Promise<File | null> => {
   try {
-    const resolvedUrl = imageUrl.startsWith("http") || imageUrl.startsWith("data:")
+    if (imageUrl.startsWith("data:image/")) {
+      return dataUrlToFile(imageUrl, fileName);
+    }
+
+    const resolvedUrl = imageUrl.startsWith("http")
       ? imageUrl
-      : `${window.location.origin}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+      : `${window.location.origin}${encodeURI(imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`)}`;
 
     const res = await fetch(resolvedUrl);
     if (!res.ok) return null;
@@ -58,17 +80,35 @@ export const shareWithThumbnail = async ({
   if (navigator.share) {
     if (imageUrl && navigator.canShare) {
       const file = await fetchImageAsFile(imageUrl, fileName);
-      if (file && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            title,
-            text,
-            url: shareUrl,
-            files: [file],
-          });
-          return;
-        } catch (err) {
-          if ((err as Error)?.name === "AbortError") return;
+      if (file) {
+        // Prefer attaching thumbnail file + link together
+        if (navigator.canShare({ title, text, url: shareUrl, files: [file] })) {
+          try {
+            await navigator.share({
+              title,
+              text,
+              url: shareUrl,
+              files: [file],
+            });
+            return;
+          } catch (err) {
+            if ((err as Error)?.name === "AbortError") return;
+          }
+        }
+
+        // Fallback for browsers that disallow `url` alongside `files`
+        const combinedText = `${text}\n${shareUrl}`;
+        if (navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              title,
+              text: combinedText,
+              files: [file],
+            });
+            return;
+          } catch (err) {
+            if ((err as Error)?.name === "AbortError") return;
+          }
         }
       }
     }

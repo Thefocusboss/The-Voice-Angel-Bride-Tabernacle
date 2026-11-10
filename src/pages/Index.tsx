@@ -59,56 +59,108 @@ const Index = () => {
       {/* Special Announcement Popup on Landing Page Load */}
       {specialAnnouncement.visible && (
         <Dialog open={announcementOpen} onOpenChange={setAnnouncementOpen}>
-          <DialogContent className="w-[92vw] max-w-lg p-0 overflow-hidden border-primary/20 rounded-2xl">
-            {specialAnnouncement.thumbnail && (
-              <div className="relative h-44 sm:h-56 w-full bg-muted">
-                <img
-                  src={specialAnnouncement.thumbnail}
-                  alt={specialAnnouncement.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              </div>
-            )}
-            <div className="p-6">
-              <DialogHeader className="mb-4">
-                <div className="flex items-center gap-2 text-primary mb-1">
-                  <Megaphone className="w-5 h-5" />
-                  <span className="text-xs font-semibold uppercase tracking-wider">Church Notice</span>
+          <DialogContent className="w-[92vw] max-w-lg max-h-[88dvh] flex flex-col gap-0 p-0 overflow-hidden border-primary/20 rounded-2xl [&>button]:bg-background/85 [&>button]:backdrop-blur-sm [&>button]:rounded-full [&>button]:p-1.5 [&>button]:text-foreground [&>button]:opacity-100 [&>button]:shadow-sm">
+            {/* Scrollable Body (Thumbnail + Text) */}
+            <div className="overflow-y-auto flex-1 overscroll-contain">
+              {specialAnnouncement.thumbnail && (
+                <div className="relative h-40 sm:h-52 w-full bg-muted flex-shrink-0">
+                  <img
+                    src={specialAnnouncement.thumbnail}
+                    alt={specialAnnouncement.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/25" />
                 </div>
-                <DialogTitle className="text-2xl font-bold font-serif">
-                  {specialAnnouncement.title}
-                </DialogTitle>
-                <DialogDescription className="text-base text-muted-foreground pt-2 leading-relaxed">
-                  {specialAnnouncement.description}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button
-                  className="btn-primary flex-1 py-2.5 text-base"
-                  onClick={() => setAnnouncementOpen(false)}
-                >
-                  {specialAnnouncement.primaryButtonText || "Add to Calendar"}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="btn-secondary flex-1 py-2.5 text-base"
-                  onClick={() =>
-                    shareWithThumbnail({
-                      title: specialAnnouncement.title || "Special Announcement",
-                      text: `${specialAnnouncement.title}: ${specialAnnouncement.description}`,
-                      shareType: "announcement",
-                      itemId: "special",
-                      fallbackPath: "/",
-                      imageUrl: specialAnnouncement.thumbnail,
-                      fileName: "vabt-announcement",
-                      copySuccessMessage: "Announcement link copied to clipboard!",
-                    })
-                  }
-                >
-                  {specialAnnouncement.secondaryButtonText || "Share Announcement"}
-                </Button>
+              )}
+              <div className="p-4 sm:p-6">
+                <DialogHeader className="text-left">
+                  <div className="flex items-center gap-2 text-primary mb-1">
+                    <Megaphone className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                    <span className="text-xs font-semibold uppercase tracking-wider">Church Notice</span>
+                  </div>
+                  <DialogTitle className="text-xl sm:text-2xl font-bold font-serif leading-snug">
+                    {specialAnnouncement.title}
+                  </DialogTitle>
+                  <DialogDescription className="text-sm sm:text-base text-muted-foreground pt-2 leading-relaxed whitespace-pre-line break-words">
+                    {specialAnnouncement.description}
+                  </DialogDescription>
+                </DialogHeader>
+
+                {/* Additional Announcement Boxes inside the same popup */}
+                {specialAnnouncement.extraAnnouncements &&
+                  specialAnnouncement.extraAnnouncements.length > 0 && (
+                    <div className="mt-5 space-y-4 pt-4 border-t border-border">
+                      {specialAnnouncement.extraAnnouncements.map((item, idx) => (
+                        <div
+                          key={item.id || idx}
+                          className="rounded-xl border border-primary/20 bg-muted/50 overflow-hidden"
+                        >
+                          {item.thumbnail && (
+                            <img
+                              src={item.thumbnail}
+                              alt={item.title || `Announcement ${idx + 2}`}
+                              className="w-full h-36 object-cover"
+                            />
+                          )}
+                          <div className="p-3.5 sm:p-4 text-left space-y-1.5">
+                            {item.title && (
+                              <h4 className="font-semibold text-base text-foreground font-serif">
+                                {item.title}
+                              </h4>
+                            )}
+                            {item.description && (
+                              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line break-words">
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
               </div>
+            </div>
+
+            {/* Pinned Action Buttons Footer */}
+            <div className="p-4 sm:px-6 sm:py-4 border-t border-border bg-background/95 flex flex-col sm:flex-row gap-2.5 sm:gap-3 flex-shrink-0">
+              <Button
+                className="btn-primary flex-1 py-2.5 text-sm sm:text-base"
+                onClick={() => setAnnouncementOpen(false)}
+              >
+                {specialAnnouncement.primaryButtonText || "Add to Calendar"}
+              </Button>
+              <Button
+                variant="outline"
+                className="btn-secondary flex-1 py-2.5 text-sm sm:text-base"
+                onClick={() => {
+                  const extraText = (specialAnnouncement.extraAnnouncements || [])
+                    .map((a) => (a.title ? `${a.title}: ${a.description}` : a.description))
+                    .filter(Boolean)
+                    .join("\n\n");
+                  const combinedText = extraText
+                    ? `${specialAnnouncement.title}: ${specialAnnouncement.description}\n\n${extraText}`
+                    : `${specialAnnouncement.title}: ${specialAnnouncement.description}`;
+
+                  const announcementThumbnail =
+                    specialAnnouncement.thumbnail ||
+                    (specialAnnouncement.extraAnnouncements || []).find((a) => a.thumbnail)
+                      ?.thumbnail ||
+                    "/Supernatural cloud.jpg";
+
+                  return shareWithThumbnail({
+                    title: specialAnnouncement.title || "Special Announcement",
+                    text: combinedText,
+                    shareType: "announcement",
+                    itemId: "special",
+                    fallbackPath: "/",
+                    imageUrl: announcementThumbnail,
+                    fileName: "vabt-announcement",
+                    copySuccessMessage: "Announcement link copied to clipboard!",
+                  });
+                }}
+              >
+                {specialAnnouncement.secondaryButtonText || "Share Announcement"}
+              </Button>
             </div>
           </DialogContent>
         </Dialog>

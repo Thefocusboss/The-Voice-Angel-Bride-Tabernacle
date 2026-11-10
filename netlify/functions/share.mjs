@@ -102,15 +102,29 @@ export default async (req) => {
         };
       }
     } else if (type === "announcement") {
-      const sa = siteData?.specialAnnouncement;
-      if (sa) {
-        meta = {
-          title: sa.title || "Special Announcement — Voice Angel Bride Tabernacle",
-          description: sa.description || FALLBACK_META.description,
-          image: sa.thumbnail || "/Supernatural cloud.jpg",
-          redirect: "/",
-        };
-      }
+      const sa = siteData?.specialAnnouncement || {
+        title: "Special Announcement",
+        description:
+          "Bukuru Youth meetings hold on September 5th, 2025. Pray with us and plan to attend. God bless you.",
+        thumbnail: "/Supernatural cloud.jpg",
+        extraAnnouncements: [],
+      };
+      const extra = (sa.extraAnnouncements || [])
+        .map((a) => (a.title ? `${a.title}: ${a.description}` : a.description))
+        .filter(Boolean)
+        .join(" • ");
+      const fallbackThumb =
+        sa.thumbnail ||
+        (sa.extraAnnouncements || []).find((a) => a.thumbnail)?.thumbnail ||
+        "/Supernatural cloud.jpg";
+      meta = {
+        title: sa.title || "Special Announcement — Voice Angel Bride Tabernacle",
+        description: extra
+          ? `${sa.description || ""} • ${extra}`
+          : sa.description || FALLBACK_META.description,
+        image: fallbackThumb,
+        redirect: "/",
+      };
     }
 
     // Serve base64-uploaded image directly so social scrapers receive real image bytes
@@ -130,7 +144,7 @@ export default async (req) => {
       }
       const fallbackUrl = meta.image.startsWith("http")
         ? meta.image
-        : `${origin}${meta.image.startsWith("/") ? "" : "/"}${meta.image}`;
+        : `${origin}${encodeURI(meta.image.startsWith("/") ? meta.image : `/${meta.image}`)}`;
       return Response.redirect(fallbackUrl, 302);
     }
 
@@ -140,7 +154,7 @@ export default async (req) => {
     } else if (meta.image.startsWith("http")) {
       ogImageUrl = meta.image;
     } else if (meta.image) {
-      ogImageUrl = `${origin}${meta.image.startsWith("/") ? "" : "/"}${meta.image}`;
+      ogImageUrl = `${origin}${encodeURI(meta.image.startsWith("/") ? meta.image : `/${meta.image}`)}`;
     }
 
     const redirectTarget = meta.redirect.startsWith("http")

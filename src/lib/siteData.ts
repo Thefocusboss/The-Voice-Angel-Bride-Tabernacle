@@ -69,6 +69,13 @@ export const getYouTubeThumbnailUrl = (url: string): string | null => {
   return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
 };
 
+export interface ExtraAnnouncementItem {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail?: string;
+}
+
 export interface SiteData {
   liveServices: {
     visible: boolean;
@@ -107,6 +114,7 @@ export interface SiteData {
     thumbnail: string;
     primaryButtonText: string;
     secondaryButtonText: string;
+    extraAnnouncements: ExtraAnnouncementItem[];
   };
 }
 
@@ -290,6 +298,7 @@ export const defaultSiteData: SiteData = {
     thumbnail: "/Supernatural cloud.jpg",
     primaryButtonText: "Add to Calendar",
     secondaryButtonText: "Share Announcement",
+    extraAnnouncements: [],
   },
 };
 
@@ -351,6 +360,7 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
     specialAnnouncement: {
       ...defaultSiteData.specialAnnouncement,
       ...parsed.specialAnnouncement,
+      extraAnnouncements: parsed.specialAnnouncement?.extraAnnouncements || [],
     },
   };
 };

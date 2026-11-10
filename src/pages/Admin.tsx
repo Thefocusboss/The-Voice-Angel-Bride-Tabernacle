@@ -5,6 +5,7 @@ import {
   MorningTonicPostItem,
   UpcomingEventItem,
   LiveServiceItem,
+  ExtraAnnouncementItem,
   getYouTubeThumbnailUrl,
   getFormattedToday,
 } from "@/lib/siteData";
@@ -394,6 +395,62 @@ const Admin = () => {
       ...draft,
       liveServices: { ...draft.liveServices, items },
     });
+  };
+
+  // Extra Announcement Box helpers
+  const addExtraAnnouncement = () => {
+    const newId = `ann-${Date.now()}`;
+    const newBox: ExtraAnnouncementItem = {
+      id: newId,
+      title: "Additional Notice",
+      description: "Enter announcement details here...",
+      thumbnail: "",
+    };
+    setDraft((prev) => ({
+      ...prev,
+      specialAnnouncement: {
+        ...prev.specialAnnouncement,
+        extraAnnouncements: [
+          ...(prev.specialAnnouncement.extraAnnouncements || []),
+          newBox,
+        ],
+      },
+    }));
+    toast.success("New announcement box added! Edit below and click 'Save Changes'.");
+    setTimeout(() => {
+      document.getElementById(`admin-extra-ann-${newId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 50);
+  };
+
+  const updateExtraAnnouncement = (
+    index: number,
+    patch: Partial<ExtraAnnouncementItem>
+  ) => {
+    const list = [...(draft.specialAnnouncement.extraAnnouncements || [])];
+    list[index] = { ...list[index], ...patch };
+    setDraft((prev) => ({
+      ...prev,
+      specialAnnouncement: {
+        ...prev.specialAnnouncement,
+        extraAnnouncements: list,
+      },
+    }));
+  };
+
+  const removeExtraAnnouncement = (index: number) => {
+    const list = (draft.specialAnnouncement.extraAnnouncements || []).filter(
+      (_, i) => i !== index
+    );
+    setDraft((prev) => ({
+      ...prev,
+      specialAnnouncement: {
+        ...prev.specialAnnouncement,
+        extraAnnouncements: list,
+      },
+    }));
   };
 
   // Render Login Page when not authenticated
@@ -1606,6 +1663,130 @@ const Admin = () => {
                         />
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Additional Announcement Boxes Inside the Same Popup */}
+                <div className="pt-6 border-t space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        Additional Announcement Boxes (Same Popup)
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        Add extra announcement boxes that appear stacked inside the same scrollable announcement popup.
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={addExtraAnnouncement}
+                      size="sm"
+                      className="gap-2 w-full sm:w-auto"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Announcement Box
+                    </Button>
+                  </div>
+
+                  {(!draft.specialAnnouncement.extraAnnouncements ||
+                    draft.specialAnnouncement.extraAnnouncements.length === 0) && (
+                    <div className="p-6 rounded-xl border border-dashed text-center text-sm text-muted-foreground">
+                      No additional announcement boxes added yet. Click "Add Announcement Box" to add more announcements to the popup.
+                    </div>
+                  )}
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {(draft.specialAnnouncement.extraAnnouncements || []).map(
+                      (box, index) => (
+                        <Card
+                          key={box.id || index}
+                          id={`admin-extra-ann-${box.id || index}`}
+                          className="border overflow-hidden"
+                        >
+                          <CardHeader className="py-3 px-4 bg-muted/40 border-b flex flex-row items-center justify-between">
+                            <span className="font-semibold text-sm">
+                              Announcement Box #{index + 2}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => removeExtraAnnouncement(index)}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </CardHeader>
+                          <CardContent className="p-4 space-y-3">
+                            <div className="space-y-1.5">
+                              <Label>Heading (Optional)</Label>
+                              <Input
+                                value={box.title}
+                                placeholder="Announcement title"
+                                onChange={(e) =>
+                                  updateExtraAnnouncement(index, {
+                                    title: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label>Announcement Message</Label>
+                              <Textarea
+                                rows={3}
+                                value={box.description}
+                                placeholder="Write announcement message..."
+                                onChange={(e) =>
+                                  updateExtraAnnouncement(index, {
+                                    description: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label>Optional Thumbnail URL or Upload</Label>
+                              {box.thumbnail && (
+                                <div className="h-32 rounded-lg overflow-hidden border bg-muted mb-2">
+                                  <img
+                                    src={box.thumbnail}
+                                    alt={box.title || "Extra announcement thumbnail"}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <Input
+                                value={box.thumbnail || ""}
+                                placeholder="Leave empty for text-only box, or paste URL"
+                                onChange={(e) =>
+                                  updateExtraAnnouncement(index, {
+                                    thumbnail: e.target.value,
+                                  })
+                                }
+                              />
+                              <label className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                                <Upload className="w-3.5 h-3.5" />
+                                <span>Upload Image File</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      handleImageUpload(file, (dataUrl) =>
+                                        updateExtraAnnouncement(index, {
+                                          thumbnail: dataUrl,
+                                        })
+                                      );
+                                    }
+                                  }}
+                                />
+                              </label>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    )}
                   </div>
                 </div>
               </CardContent>
