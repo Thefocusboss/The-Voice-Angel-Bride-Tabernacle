@@ -51,6 +51,7 @@ import {
   Phone,
   Heart,
   BookOpen,
+  LayoutTemplate,
 } from "lucide-react";
 
 const ADMIN_CRED_KEY = "vabt_admin_credentials_v1";
@@ -817,6 +818,32 @@ const Admin = () => {
                   }
                 />
               </div>
+
+              {/* Footer Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.footer.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">Footer</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.footer.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.footer.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      footer: { ...draft.footer, visible: checked },
+                    })
+                  }
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -855,6 +882,10 @@ const Admin = () => {
             <TabsTrigger value="contact" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Phone className="w-4 h-4" />
               Contact Us
+            </TabsTrigger>
+            <TabsTrigger value="footer" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
+              <LayoutTemplate className="w-4 h-4" />
+              Footer
             </TabsTrigger>
             <TabsTrigger value="settings" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Settings className="w-4 h-4" />
@@ -2699,6 +2730,291 @@ const Admin = () => {
                                 ...draft.contactUs,
                                 prayerInPerson: e.target.value,
                               },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* FOOTER EDITOR */}
+          <TabsContent value="footer" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Footer Section</CardTitle>
+                  <CardDescription>
+                    Edit church info, footer contact details, social media links, service times bar, copyright, and scripture quote.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="ft-visible">Footer Visible</Label>
+                  <Switch
+                    id="ft-visible"
+                    checked={draft.footer.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        footer: { ...draft.footer, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Brand & Contact */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">Brand & Bio</h4>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label>Brand Title</Label>
+                          <Input
+                            value={draft.footer.brandTitle}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, brandTitle: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Brand Subtitle</Label>
+                          <Input
+                            value={draft.footer.brandSubtitle}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, brandSubtitle: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Footer Description</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.footer.description}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: { ...draft.footer, description: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Address</Label>
+                        <Input
+                          value={draft.footer.address}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: { ...draft.footer, address: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label>Phone</Label>
+                          <Input
+                            value={draft.footer.phone}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, phone: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Email</Label>
+                          <Input
+                            value={draft.footer.email}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, email: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Newsletter & Socials */}
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">Newsletter & Social Links</h4>
+                      <div className="space-y-1.5">
+                        <Label>Newsletter Heading</Label>
+                        <Input
+                          value={draft.footer.newsletterTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: { ...draft.footer, newsletterTitle: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Newsletter Description</Label>
+                        <Textarea
+                          rows={2}
+                          value={draft.footer.newsletterDescription}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: {
+                                ...draft.footer,
+                                newsletterDescription: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label>YouTube URL</Label>
+                          <Input
+                            value={draft.footer.youtubeUrl}
+                            placeholder="https://youtube.com/..."
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, youtubeUrl: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Facebook URL</Label>
+                          <Input
+                            value={draft.footer.facebookUrl}
+                            placeholder="https://facebook.com/..."
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, facebookUrl: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Twitter / X URL</Label>
+                          <Input
+                            value={draft.footer.twitterUrl}
+                            placeholder="https://x.com/..."
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, twitterUrl: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Instagram URL</Label>
+                          <Input
+                            value={draft.footer.instagramUrl}
+                            placeholder="https://instagram.com/..."
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, instagramUrl: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Service Times Bar & Bottom Bar */}
+                <div className="grid md:grid-cols-2 gap-6 pt-4 border-t">
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">Worship & Service Times Bar</h4>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label>Bar Heading</Label>
+                          <Input
+                            value={draft.footer.worshipTitle}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, worshipTitle: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Button Label</Label>
+                          <Input
+                            value={draft.footer.visitButtonText}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                footer: { ...draft.footer, visitButtonText: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Service Times (one per line)</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.footer.serviceTimes.join("\n")}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: {
+                                ...draft.footer,
+                                serviceTimes: e.target.value.split("\n"),
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">Bottom Bar & Scripture</h4>
+                      <div className="space-y-1.5">
+                        <Label>Copyright Text (year updates automatically)</Label>
+                        <Input
+                          value={draft.footer.copyrightText}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: { ...draft.footer, copyrightText: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Scripture Quote</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.footer.scriptureQuote}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              footer: { ...draft.footer, scriptureQuote: e.target.value },
                             })
                           }
                         />

@@ -181,6 +181,26 @@ export interface SiteData {
     prayerEmail: string;
     prayerInPerson: string;
   };
+  footer: {
+    visible: boolean;
+    brandTitle: string;
+    brandSubtitle: string;
+    description: string;
+    address: string;
+    phone: string;
+    email: string;
+    newsletterTitle: string;
+    newsletterDescription: string;
+    facebookUrl: string;
+    twitterUrl: string;
+    youtubeUrl: string;
+    instagramUrl: string;
+    worshipTitle: string;
+    serviceTimes: string[];
+    visitButtonText: string;
+    copyrightText: string;
+    scriptureQuote: string;
+  };
 }
 
 export const extractMapEmbedUrl = (input: string): string => {
@@ -488,6 +508,33 @@ export const defaultSiteData: SiteData = {
     prayerEmail: "prayer@vabtministries.org",
     prayerInPerson: "Before or after any service",
   },
+  footer: {
+    visible: true,
+    brandTitle: "Voice Angel Bride",
+    brandSubtitle: "Tabernacle Ministries",
+    description:
+      "Proclaiming the original Apostolic faith and the end-time message to prepare the bride church for the coming of our Lord Jesus Christ.",
+    address: "Our Location, Home school Avenue, Red cross Kwamba, Niger state",
+    phone: "+2348141717651",
+    email: "info@vabtministries.org",
+    newsletterTitle: "Stay Connected",
+    newsletterDescription:
+      "Subscribe to receive updates about upcoming events, new sermons, and prayer requests.",
+    facebookUrl: "",
+    twitterUrl: "",
+    youtubeUrl: "https://youtube.com/@voiceangelbridetabernacle?si=X-IuqzggU7nnvv2p",
+    instagramUrl: "",
+    worshipTitle: "Join Us for Worship",
+    serviceTimes: [
+      "Sunday: Doors open 8:00 AM; Service starts 9:00 AM",
+      "Wednesday: Doors open 5:30 PM; Service starts 6:00 PM",
+      "Friday: Doors open 5:30 PM; Service starts 6:00 PM",
+    ],
+    visitButtonText: "Plan Your Visit",
+    copyrightText: "Voice Angel Bride Tabernacle Ministries. All rights reserved.",
+    scriptureQuote:
+      '"Behold, I come quickly. Blessed is he that keepeth the sayings of the prophecy of this book." - Revelation 22:7',
+  },
 };
 
 const STORAGE_KEY = "vabt_site_data_v1";
@@ -567,6 +614,11 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
       ),
       firstVisitPoints:
         parsed.contactUs?.firstVisitPoints || defaultSiteData.contactUs.firstVisitPoints,
+    },
+    footer: {
+      ...defaultSiteData.footer,
+      ...parsed.footer,
+      serviceTimes: parsed.footer?.serviceTimes || defaultSiteData.footer.serviceTimes,
     },
   };
 };

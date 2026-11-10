@@ -2,8 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, Mail, Phone, MapPin, Facebook, Twitter, Youtube, Instagram, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSiteData } from "@/lib/siteData";
+import { toast } from "sonner";
 
 const Footer = () => {
+  const { data } = useSiteData();
+  const { footer } = data;
+
+  if (!footer.visible) {
+    return null;
+  }
+
   const quickLinks = [
     { label: "About Us", href: "#about" },
     { label: "Sermons", href: "#sermons" },
@@ -20,8 +29,20 @@ const Footer = () => {
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const openSocial = (url?: string) => {
+    const trimmed = url?.trim();
+    if (!trimmed) return;
+    window.open(trimmed, "_blank", "noopener,noreferrer");
+  };
+
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    toast.success("Thank you for subscribing to VABT updates!");
+    e.currentTarget.reset();
   };
 
   return (
@@ -32,32 +53,36 @@ const Footer = () => {
           {/* Church Information */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
-              {/* Replaced text badge with logo image */}
               <img src="/Logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
               <div>
-                <h3 className="font-bold text-lg">Voice Angel Bride</h3>
-                <p className="text-sm text-background/80">Tabernacle Ministries</p>
+                <h3 className="font-bold text-lg">{footer.brandTitle}</h3>
+                <p className="text-sm text-background/80">{footer.brandSubtitle}</p>
               </div>
             </div>
             <p className="text-background/80 mb-6 leading-relaxed">
-              Proclaiming the original Apostolic faith and the end-time message to prepare the bride church 
-              for the coming of our Lord Jesus Christ.
+              {footer.description}
             </p>
             
             {/* Contact Info */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-background/80">
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">Our Location, Home school Avenue, Red cross Kwamba, Niger state</span>
-              </div>
-              <div className="flex items-center space-x-3 text-background/80">
-                <Phone className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">+2348141717651</span>
-              </div>
-              <div className="flex items-center space-x-3 text-background/80">
-                <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm">info@vabtministries.org</span>
-              </div>
+              {footer.address && (
+                <div className="flex items-center space-x-3 text-background/80">
+                  <MapPin className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm">{footer.address}</span>
+                </div>
+              )}
+              {footer.phone && (
+                <div className="flex items-center space-x-3 text-background/80">
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm">{footer.phone}</span>
+                </div>
+              )}
+              {footer.email && (
+                <div className="flex items-center space-x-3 text-background/80">
+                  <Mail className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-sm break-all">{footer.email}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -97,17 +122,18 @@ const Footer = () => {
 
           {/* Newsletter Signup */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Stay Connected</h4>
+            <h4 className="font-semibold text-lg mb-6">{footer.newsletterTitle}</h4>
             <p className="text-background/80 text-sm mb-4">
-              Subscribe to receive updates about upcoming events, new sermons, and prayer requests.
+              {footer.newsletterDescription}
             </p>
-            <form className="space-y-3">
-              <Input 
-                type="email" 
+            <form onSubmit={handleSubscribe} className="space-y-3">
+              <Input
+                type="email"
+                required
                 placeholder="Enter your email"
                 className="bg-background/10 border-background/20 text-background placeholder:text-background/60"
               />
-              <Button className="w-full bg-primary hover:bg-primary-glow text-primary-foreground">
+              <Button type="submit" className="w-full bg-primary hover:bg-primary-glow text-primary-foreground">
                 Subscribe
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -117,16 +143,40 @@ const Footer = () => {
             <div className="mt-6">
               <h5 className="font-semibold mb-3">Follow Us</h5>
               <div className="flex space-x-3">
-                <Button size="icon" variant="ghost" className="text-background/80 hover:text-background hover:bg-background/10">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Facebook"
+                  onClick={() => openSocial(footer.facebookUrl)}
+                  className="text-background/80 hover:text-background hover:bg-background/10"
+                >
                   <Facebook className="w-4 h-4" />
                 </Button>
-                <Button size="icon" variant="ghost" className="text-background/80 hover:text-background hover:bg-background/10">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Twitter"
+                  onClick={() => openSocial(footer.twitterUrl)}
+                  className="text-background/80 hover:text-background hover:bg-background/10"
+                >
                   <Twitter className="w-4 h-4" />
                 </Button>
-                <Button size="icon" variant="ghost" className="text-background/80 hover:text-background hover:bg-background/10">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="YouTube"
+                  onClick={() => openSocial(footer.youtubeUrl)}
+                  className="text-background/80 hover:text-background hover:bg-background/10"
+                >
                   <Youtube className="w-4 h-4" />
                 </Button>
-                <Button size="icon" variant="ghost" className="text-background/80 hover:text-background hover:bg-background/10">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Instagram"
+                  onClick={() => openSocial(footer.instagramUrl)}
+                  className="text-background/80 hover:text-background hover:bg-background/10"
+                >
                   <Instagram className="w-4 h-4" />
                 </Button>
               </div>
@@ -138,18 +188,18 @@ const Footer = () => {
         <div className="border-t border-background/20 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-center md:text-left">
-              <h4 className="font-semibold mb-2">Join Us for Worship</h4>
-              <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-1 sm:space-y-0 text-background/80 text-sm">
-                <span>Sunday: Doors open 8:00 AM; Service starts 9:00 AM</span>
-                <span>Wednesday: Doors open 5:30 PM; Service starts 6:00 PM</span>
-                <span>Friday: Doors open 5:30 PM; Service starts 6:00 PM</span>
+              <h4 className="font-semibold mb-2">{footer.worshipTitle}</h4>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-6 gap-y-1 text-background/80 text-sm">
+                {footer.serviceTimes.map((time, idx) => (
+                  <span key={idx}>{time}</span>
+                ))}
               </div>
             </div>
-            <Button 
-              onClick={() => scrollToSection('#contact')}
+            <Button
+              onClick={() => scrollToSection("#contact")}
               className="bg-primary hover:bg-primary-glow text-primary-foreground"
             >
-              Plan Your Visit
+              {footer.visitButtonText || "Plan Your Visit"}
             </Button>
           </div>
         </div>
@@ -159,7 +209,9 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-background/80 text-sm">
             <div className="flex items-center justify-center md:justify-start space-x-2 text-center md:text-left">
               <Heart className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>© {Math.max(2026, new Date().getFullYear())} Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
+              <span>
+                © {Math.max(2026, new Date().getFullYear())} {footer.copyrightText}
+              </span>
             </div>
             
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
@@ -170,11 +222,13 @@ const Footer = () => {
             </div>
           </div>
           
-          <div className="mt-4 text-center">
-            <p className="text-background/60 text-xs italic">
-              "Behold, I come quickly. Blessed is he that keepeth the sayings of the prophecy of this book." - Revelation 22:7
-            </p>
-          </div>
+          {footer.scriptureQuote && (
+            <div className="mt-4 text-center">
+              <p className="text-background/60 text-xs italic">
+                {footer.scriptureQuote}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </footer>

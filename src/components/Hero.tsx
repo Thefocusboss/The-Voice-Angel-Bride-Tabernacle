@@ -32,7 +32,7 @@ const Hero = () => {
           <img
             src="/Logo.png"
             alt="Voice Angel Bride Tabernacle Logo"
-            className="h-20 sm:h-24 md:h-28 w-auto mx-auto mb-4 sm:mb-6 drop-shadow-lg"
+            className="h-32 sm:h-40 md:h-48 lg:h-52 w-auto mx-auto mb-5 sm:mb-6 drop-shadow-2xl"
           />
 
           {/* Main Heading */}
