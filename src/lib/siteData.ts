@@ -21,7 +21,46 @@ export interface UpcomingEventItem {
   image: string;
 }
 
+export interface LiveServiceItem {
+  id: string;
+  title: string;
+  date: string;
+  duration: string;
+  description: string;
+  thumbnail: string;
+  videoUrl: string;
+}
+
+export const extractYouTubeVideoId = (url: string): string | null => {
+  if (!url) return null;
+  const trimmed = url.trim();
+  const patterns = [
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+  return null;
+};
+
+export const getYouTubeThumbnailUrl = (url: string): string | null => {
+  const id = extractYouTubeVideoId(url);
+  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+};
+
 export interface SiteData {
+  liveServices: {
+    visible: boolean;
+    sectionTitle: string;
+    sectionSubtitle: string;
+    recentHeading: string;
+    items: LiveServiceItem[];
+  };
   morningTonic: {
     visible: boolean;
     sectionTitle: string;
@@ -53,10 +92,49 @@ export interface SiteData {
 }
 
 export const defaultSiteData: SiteData = {
+  liveServices: {
+    visible: true,
+    sectionTitle: "Live Services on YouTube",
+    sectionSubtitle:
+      "Experience life-changing messages that reveal the mysteries of God and prepare the bride for the rapture.",
+    recentHeading: "Recent Messages",
+    items: [
+      {
+        id: "service-1",
+        title: "The 3rd Pull: A Mountain in the Top of Mountains, A Tent Within a Tent",
+        date: "Voice Angel Bride Tabernacle",
+        duration: "Full Message",
+        description:
+          "Understanding the divine revelation of the Third Pull and its significance for the bride church today.",
+        thumbnail: "https://i.ytimg.com/vi/6q3FA5c5k8U/hqdefault.jpg",
+        videoUrl: "https://youtu.be/6q3FA5c5k8U?si=gyAxSfsZ94JHi7yL",
+      },
+      {
+        id: "service-2",
+        title: "Recognizing His Voice in the Midst of Voices",
+        date: "October 18, 2026",
+        duration: "Sunday Service",
+        description:
+          "Hearing and discerning the true Voice of God amidst the many voices in this end-time age.",
+        thumbnail: "https://i.ytimg.com/vi/whZcLU9QSFg/hqdefault.jpg",
+        videoUrl: "https://youtu.be/whZcLU9QSFg?si=QcgDEGVsYiH2g04O",
+      },
+      {
+        id: "service-3",
+        title: "Unto Thee Shall It Come, Even the First Dominion",
+        date: "Voice Angel Bride Tabernacle",
+        duration: "Live Service",
+        description:
+          "The restoration of the original apostolic dominion and promise to the end-time bride of Christ.",
+        thumbnail: "https://i.ytimg.com/vi/_7d8PzZRxxY/hqdefault.jpg",
+        videoUrl: "https://www.youtube.com/live/_7d8PzZRxxY?si=CEUnMrTs5m1w8Wqk",
+      },
+    ],
+  },
   morningTonic: {
     visible: true,
     sectionTitle: "Morning Tonic",
-    sectionSubtitle: "Listen anytime, anywhere to life-transforming teachings",
+    sectionSubtitle: "Listen anytime, anywhere to our morning tonics",
     items: [
       {
         id: "tonic-1",
@@ -194,6 +272,7 @@ export const getSiteData = (): SiteData => {
     if (!raw) return defaultSiteData;
     const parsed = JSON.parse(raw);
     return {
+      liveServices: { ...defaultSiteData.liveServices, ...parsed.liveServices },
       morningTonic: { ...defaultSiteData.morningTonic, ...parsed.morningTonic },
       tithesAndOfferings: {
         ...defaultSiteData.tithesAndOfferings,

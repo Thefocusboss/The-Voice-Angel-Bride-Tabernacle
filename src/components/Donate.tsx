@@ -104,7 +104,7 @@ const Donate = () => {
             </Card>
           </div>
 
-          {/* Sidebar Scripture & Promises */}
+          {/* Sidebar Scripture */}
           <div className="space-y-6">
             <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
               <CardContent className="p-6 text-center">
@@ -115,15 +115,6 @@ const Donate = () => {
                   "Bring ye all the tithes into the storehouse, that there may be meat in mine house, and prove me now herewith, saith the LORD of hosts, if I will not open you the windows of heaven, and pour you out a blessing, that there shall not be room enough to receive it."
                 </blockquote>
                 <cite className="text-xs font-semibold text-primary">Malachi 3:10</cite>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
-              <CardContent className="p-6 text-center">
-                <blockquote className="text-sm italic text-muted-foreground mb-3 leading-relaxed">
-                  "Give, and it shall be given unto you; good measure, pressed down, and shaken together, and running over, shall men give into your bosom."
-                </blockquote>
-                <cite className="text-xs font-semibold text-primary">Luke 6:38</cite>
               </CardContent>
             </Card>
           </div>

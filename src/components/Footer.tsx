@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, Mail, Phone, MapPin, Facebook, Twitter, Youtube, Instagram, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const quickLinks = [
@@ -162,7 +163,7 @@ const Footer = () => {
             </div>
             
             <div className="flex space-x-6">
-              <a href="/admin" className="hover:text-background transition-colors font-medium">Admin</a>
+              <Link to="/admin" className="hover:text-background transition-colors font-medium">Admin</Link>
               <button className="hover:text-background transition-colors">Privacy Policy</button>
               <button className="hover:text-background transition-colors">Terms of Service</button>
               <button className="hover:text-background transition-colors">Accessibility</button>

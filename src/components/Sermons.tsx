@@ -1,54 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Calendar, Clock, Download } from "lucide-react";
+import { Play, Calendar, Clock } from "lucide-react";
+import { useSiteData } from "@/lib/siteData";
 
 const Sermons = () => {
-  const sermons = [
-    {
-      id: 1,
-      title: "The 3rd Pull: A Mountain in the Top of Mountains, A Tent Within a Tent",
-      date: "Voice Angel Bride Tabernacle",
-      duration: "Full Message",
-      description: "Understanding the divine revelation of the Third Pull and its significance for the bride church today.",
-      thumbnail: "https://i.ytimg.com/vi/6q3FA5c5k8U/hqdefault.jpg",
-      videoUrl: "https://youtu.be/6q3FA5c5k8U?si=gyAxSfsZ94JHi7yL"
-    },
-    {
-      id: 2,
-      title: "Recognizing His Voice in the Midst of Voices",
-      date: "October 18, 2026", 
-      duration: "Sunday Service",
-      description: "Hearing and discerning the true Voice of God amidst the many voices in this end-time age.",
-      thumbnail: "https://i.ytimg.com/vi/whZcLU9QSFg/hqdefault.jpg",
-      videoUrl: "https://youtu.be/whZcLU9QSFg?si=QcgDEGVsYiH2g04O"
-    },
-    {
-      id: 3,
-      title: "Unto Thee Shall It Come, Even the First Dominion",
-      date: "Voice Angel Bride Tabernacle",
-      duration: "Live Service", 
-      description: "The restoration of the original apostolic dominion and promise to the end-time bride of Christ.",
-      thumbnail: "https://i.ytimg.com/vi/_7d8PzZRxxY/hqdefault.jpg",
-      videoUrl: "https://www.youtube.com/live/_7d8PzZRxxY?si=CEUnMrTs5m1w8Wqk"
-    }
-  ];
+  const { data } = useSiteData();
+  const { liveServices } = data;
+
+  if (!liveServices.visible) {
+    return null;
+  }
 
   return (
     <section id="sermons" className="py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="section-title">Live Services on YouTube</h2>
+          <h2 className="section-title">{liveServices.sectionTitle}</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Experience life-changing messages that reveal the mysteries of God and prepare the bride for the rapture.
+            {liveServices.sectionSubtitle}
           </p>
         </div>
 
         {/* Recent Sermons */}
         <div className="mb-16">
-          <h3 className="text-2xl font-bold mb-8 text-center">Recent Messages</h3>
+          <h3 className="text-2xl font-bold mb-8 text-center">{liveServices.recentHeading}</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sermons.map((sermon) => (
+            {liveServices.items.map((sermon) => (
               <Card key={sermon.id} className="card-hover group overflow-hidden">
                 <div
                   className="relative cursor-pointer"

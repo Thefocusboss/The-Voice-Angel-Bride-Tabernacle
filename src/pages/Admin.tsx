@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { useSiteData, MorningTonicItem, UpcomingEventItem } from "@/lib/siteData";
+import {
+  useSiteData,
+  MorningTonicItem,
+  UpcomingEventItem,
+  LiveServiceItem,
+  getYouTubeThumbnailUrl,
+} from "@/lib/siteData";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +32,8 @@ import {
   LogOut,
   Settings,
   ShieldCheck,
+  Youtube,
+  Link2,
 } from "lucide-react";
 
 const ADMIN_CRED_KEY = "vabt_admin_credentials_v1";
@@ -230,6 +238,50 @@ const Admin = () => {
     });
   };
 
+  // Live Services on YouTube helpers
+  const updateLiveServiceItem = (index: number, patch: Partial<LiveServiceItem>) => {
+    const items = [...draft.liveServices.items];
+    const nextItem = { ...items[index], ...patch };
+    if (patch.videoUrl !== undefined) {
+      const ytThumb = getYouTubeThumbnailUrl(patch.videoUrl);
+      if (ytThumb) {
+        nextItem.thumbnail = ytThumb;
+      }
+    }
+    items[index] = nextItem;
+    setDraft({
+      ...draft,
+      liveServices: { ...draft.liveServices, items },
+    });
+  };
+
+  const addLiveServiceItem = () => {
+    const newItem: LiveServiceItem = {
+      id: `service-${Date.now()}`,
+      title: "New YouTube Live Service",
+      date: "Voice Angel Bride Tabernacle",
+      duration: "Live Service",
+      description: "Enter a short description of this message.",
+      thumbnail: "/Supernatural cloud.jpg",
+      videoUrl: "https://www.youtube.com/@voiceangelbridetabernacle",
+    };
+    setDraft({
+      ...draft,
+      liveServices: {
+        ...draft.liveServices,
+        items: [...draft.liveServices.items, newItem],
+      },
+    });
+  };
+
+  const removeLiveServiceItem = (index: number) => {
+    const items = draft.liveServices.items.filter((_, i) => i !== index);
+    setDraft({
+      ...draft,
+      liveServices: { ...draft.liveServices, items },
+    });
+  };
+
   // Render Login Page when not authenticated
   if (!isAuthenticated) {
     return (
@@ -245,9 +297,17 @@ const Admin = () => {
           </div>
 
           <Card className="shadow-xl border-primary/20">
-            <CardHeader className="text-center space-y-2 pb-6">
-              <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                <Lock className="w-7 h-7 text-primary" />
+            <CardHeader className="text-center space-y-3 pb-6">
+              <div className="flex flex-col items-center gap-3 mb-1">
+                <img
+                  src="/Logo.png"
+                  alt="Voice Angel Bride Tabernacle Logo"
+                  className="h-16 w-auto object-contain"
+                />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Secure Admin Access</span>
+                </div>
               </div>
               <CardTitle className="text-2xl font-bold font-serif">
                 Admin Portal Login
@@ -324,7 +384,7 @@ const Admin = () => {
             </Link>
             <div className="h-6 w-px bg-border" />
             <div className="flex items-center space-x-2">
-              <img src="/logo.png" alt="VABT Logo" className="h-8 w-auto" />
+              <img src="/Logo.png" alt="VABT Logo" className="h-8 w-auto" />
               <h1 className="text-lg font-bold">VABT Admin Dashboard</h1>
             </div>
           </div>
@@ -356,7 +416,33 @@ const Admin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {/* Live Services Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.liveServices.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">Live Services</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.liveServices.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.liveServices.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      liveServices: { ...draft.liveServices, visible: checked },
+                    })
+                  }
+                />
+              </div>
+
               {/* Morning Tonic Toggle */}
               <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
                 <div className="flex items-center space-x-3">
@@ -465,8 +551,12 @@ const Admin = () => {
         </Card>
 
         {/* Detailed Section Editors */}
-        <Tabs defaultValue="morning-tonic" className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full h-auto p-1 bg-background border">
+        <Tabs defaultValue="live-services" className="space-y-6">
+          <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full h-auto p-1 bg-background border">
+            <TabsTrigger value="live-services" className="py-3 gap-2">
+              <Youtube className="w-4 h-4" />
+              Live Services
+            </TabsTrigger>
             <TabsTrigger value="morning-tonic" className="py-3 gap-2">
               <Sparkles className="w-4 h-4" />
               Morning Tonic
@@ -488,6 +578,183 @@ const Admin = () => {
               Settings
             </TabsTrigger>
           </TabsList>
+
+          {/* 0. LIVE SERVICES ON YOUTUBE EDITOR */}
+          <TabsContent value="live-services" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Live Services on YouTube</CardTitle>
+                  <CardDescription>
+                    Update YouTube video links, titles, details, and thumbnails. Pasting a YouTube link automatically updates the thumbnail.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="ls-visible">Section Visible</Label>
+                  <Switch
+                    id="ls-visible"
+                    checked={draft.liveServices.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        liveServices: { ...draft.liveServices, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Section Title</Label>
+                    <Input
+                      value={draft.liveServices.sectionTitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          liveServices: { ...draft.liveServices, sectionTitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Subheading</Label>
+                    <Input
+                      value={draft.liveServices.recentHeading}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          liveServices: { ...draft.liveServices, recentHeading: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Section Subtitle</Label>
+                    <Input
+                      value={draft.liveServices.sectionSubtitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          liveServices: { ...draft.liveServices, sectionSubtitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <h3 className="font-semibold text-lg">YouTube Videos</h3>
+                  <Button onClick={addLiveServiceItem} size="sm" className="gap-2">
+                    <Plus className="w-4 h-4" />
+                    Add YouTube Video
+                  </Button>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                  {draft.liveServices.items.map((item, index) => (
+                    <Card key={item.id || index} className="overflow-hidden border">
+                      <div className="relative h-44 bg-muted">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 h-8 w-8"
+                          onClick={() => removeLiveServiceItem(index)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <CardContent className="p-4 space-y-3">
+                        <div className="space-y-1.5">
+                          <Label className="flex items-center gap-1.5">
+                            <Link2 className="w-3.5 h-3.5 text-primary" />
+                            YouTube Link
+                          </Label>
+                          <Input
+                            value={item.videoUrl}
+                            placeholder="https://youtu.be/... or https://www.youtube.com/live/..."
+                            onChange={(e) =>
+                              updateLiveServiceItem(index, { videoUrl: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Video Title</Label>
+                          <Input
+                            value={item.title}
+                            onChange={(e) =>
+                              updateLiveServiceItem(index, { title: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <Label>Date / Label</Label>
+                            <Input
+                              value={item.date}
+                              onChange={(e) =>
+                                updateLiveServiceItem(index, { date: e.target.value })
+                              }
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label>Service Type</Label>
+                            <Input
+                              value={item.duration}
+                              onChange={(e) =>
+                                updateLiveServiceItem(index, { duration: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Description</Label>
+                          <Textarea
+                            value={item.description}
+                            onChange={(e) =>
+                              updateLiveServiceItem(index, { description: e.target.value })
+                            }
+                            rows={2}
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Thumbnail URL (auto-filled from YouTube link)</Label>
+                          <Input
+                            value={item.thumbnail}
+                            onChange={(e) =>
+                              updateLiveServiceItem(index, { thumbnail: e.target.value })
+                            }
+                          />
+                          <label className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Upload Custom Thumbnail</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleImageUpload(file, (dataUrl) =>
+                                    updateLiveServiceItem(index, { thumbnail: dataUrl })
+                                  );
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* 1. MORNING TONIC EDITOR */}
           <TabsContent value="morning-tonic" className="space-y-6">
