@@ -22,7 +22,7 @@ const Hero = () => {
           loop
           playsInline
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-secondary-deep/50 to-primary/80"></div>
+        <div className="absolute inset-0 bg-black/70"></div>
       </div>
 
       {/* Content */}

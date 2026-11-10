@@ -158,10 +158,11 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-background/80 text-sm">
             <div className="flex items-center space-x-2">
               <Heart className="w-4 h-4 text-primary" />
-              <span>© 2025 Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
+              <span>© {Math.max(2026, new Date().getFullYear())} Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
             </div>
             
             <div className="flex space-x-6">
+              <a href="/admin" className="hover:text-background transition-colors font-medium">Admin</a>
               <button className="hover:text-background transition-colors">Privacy Policy</button>
               <button className="hover:text-background transition-colors">Terms of Service</button>
               <button className="hover:text-background transition-colors">Accessibility</button>

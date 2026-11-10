@@ -6,30 +6,30 @@ const Sermons = () => {
   const sermons = [
     {
       id: 1,
-      title: "The Mystery of the Seven Thunders",
-      date: "December 15, 2024",
-      duration: "45 min",
-      description: "Understanding the divine revelations contained in the seven seals and their significance for the bride church.",
-      thumbnail: "/Huffman christ.jpg", // updated per request
-      videoUrl: "#"
+      title: "The 3rd Pull: A Mountain in the Top of Mountains, A Tent Within a Tent",
+      date: "Voice Angel Bride Tabernacle",
+      duration: "Full Message",
+      description: "Understanding the divine revelation of the Third Pull and its significance for the bride church today.",
+      thumbnail: "https://i.ytimg.com/vi/6q3FA5c5k8U/hqdefault.jpg",
+      videoUrl: "https://youtu.be/6q3FA5c5k8U?si=gyAxSfsZ94JHi7yL"
     },
     {
       id: 2,
-      title: "The Voice of the Seventh Angel",
-      date: "December 8, 2024", 
-      duration: "52 min",
-      description: "Exploring Revelation 10:7 and the ministry of God's end-time messenger William Marion Branham.",
-      thumbnail: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=225&fit=crop&crop=center",
-      videoUrl: "#"
+      title: "Recognizing His Voice in the Midst of Voices",
+      date: "October 18, 2026", 
+      duration: "Sunday Service",
+      description: "Hearing and discerning the true Voice of God amidst the many voices in this end-time age.",
+      thumbnail: "https://i.ytimg.com/vi/whZcLU9QSFg/hqdefault.jpg",
+      videoUrl: "https://youtu.be/whZcLU9QSFg?si=QcgDEGVsYiH2g04O"
     },
     {
       id: 3,
-      title: "Turning Hearts to the Fathers",
-      date: "December 1, 2024",
-      duration: "38 min", 
-      description: "The Malachi 4 promise and restoring the apostolic faith of the fathers to this generation.",
-      thumbnail: "https://images.unsplash.com/photo-1501696461415-6bd6660c6742?w=400&h=225&fit=crop&crop=center",
-      videoUrl: "#"
+      title: "Unto Thee Shall It Come, Even the First Dominion",
+      date: "Voice Angel Bride Tabernacle",
+      duration: "Live Service", 
+      description: "The restoration of the original apostolic dominion and promise to the end-time bride of Christ.",
+      thumbnail: "https://i.ytimg.com/vi/_7d8PzZRxxY/hqdefault.jpg",
+      videoUrl: "https://www.youtube.com/live/_7d8PzZRxxY?si=CEUnMrTs5m1w8Wqk"
     }
   ];
 
@@ -38,7 +38,7 @@ const Sermons = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="section-title">Sermons & Teachings</h2>
+          <h2 className="section-title">Live Services on YouTube</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Experience life-changing messages that reveal the mysteries of God and prepare the bride for the rapture.
           </p>
@@ -50,7 +50,10 @@ const Sermons = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sermons.map((sermon) => (
               <Card key={sermon.id} className="card-hover group overflow-hidden">
-                <div className="relative">
+                <div
+                  className="relative cursor-pointer"
+                  onClick={() => window.open(sermon.videoUrl, "_blank", "noopener,noreferrer")}
+                >
                   <img
                     src={sermon.thumbnail}
                     alt={sermon.title}
@@ -80,12 +83,12 @@ const Sermons = () => {
                 <CardContent>
                   <p className="text-muted-foreground text-sm mb-4">{sermon.description}</p>
                   <div className="flex gap-2">
-                    <Button className="btn-secondary flex-1">
+                    <Button
+                      className="btn-secondary flex-1"
+                      onClick={() => window.open(sermon.videoUrl, "_blank", "noopener,noreferrer")}
+                    >
                       <Play className="w-4 h-4 mr-2" />
                       Watch
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <Download className="w-4 h-4" />
                     </Button>
                   </div>
                 </CardContent>

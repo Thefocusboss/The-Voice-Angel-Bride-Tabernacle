@@ -1,32 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Star, Globe, Clock, Play } from "lucide-react";
+import { useSiteData } from "@/lib/siteData";
 
 const About = () => {
-  const podcasts = [
-    {
-      title: "Daily Devotions with Pastor Michael",
-      description: "Start your day with inspiring words from God's messenger",
-      episodes: 127
-    },
-    {
-      title: "End Time Revelations",
-      description: "Deep dive into prophetic teachings and Bible mysteries",
-      episodes: 89
-    },
-    {
-      title: "Apostolic Faith Series",
-      description: "Foundational teachings on original apostolic beliefs",
-      episodes: 156
-    }
-  ];
+  const { data } = useSiteData();
+  const { morningTonic } = data;
 
   return (
     <section id="about" className="py-20 bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="section-title">About Our Church</h2>
+          <h2 className="section-title">About VABT</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Learn about our history, mission, and the end-time message we proclaim to the world.
           </p>
@@ -114,30 +100,41 @@ const About = () => {
         </div>
 
         {/* Morning Tonic Section - Moved from Sermons */}
-        <div className="bg-card rounded-2xl p-8 shadow-lg">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-4">Morning Tonic</h3>
-            <p className="text-muted-foreground">Listen anytime, anywhere to life-transforming teachings</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            {podcasts.map((podcast, index) => (
-              <Card key={index} className="card-hover bg-background">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Play className="w-8 h-8 text-primary-foreground" />
+        {morningTonic.visible && (
+          <div className="bg-card rounded-2xl p-8 shadow-lg">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">{morningTonic.sectionTitle}</h3>
+              <p className="text-muted-foreground">{morningTonic.sectionSubtitle}</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              {morningTonic.items.map((podcast, index) => (
+                <Card key={podcast.id || index} className="card-hover bg-background group overflow-hidden">
+                  <div className="relative">
+                    <img
+                      src={podcast.thumbnail}
+                      alt={podcast.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <Play className="w-6 h-6 text-primary-foreground" />
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
-                  <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
-                  <div className="text-primary font-semibold mb-4">{podcast.episodes} Episodes</div>
-                  <Button className="btn-secondary w-full">
-                    Listen Now
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6 text-center">
+                    <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
+                    <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
+                    <div className="text-primary font-semibold mb-4">{podcast.episodes} Episodes</div>
+                    <Button className="btn-secondary w-full">
+                      <Play className="w-4 h-4 mr-2" />
+                      Listen Now
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
