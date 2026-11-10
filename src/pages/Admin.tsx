@@ -9,6 +9,7 @@ import {
   ContactInfoCard,
   getYouTubeThumbnailUrl,
   getFormattedToday,
+  extractMapEmbedUrl,
 } from "@/lib/siteData";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -2525,7 +2526,7 @@ const Admin = () => {
                       />
                     </div>
                   </div>
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label>Map Title</Label>
                       <Input
@@ -2551,10 +2552,26 @@ const Admin = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
+                      <Label>Google Maps Embed URL (or iframe code)</Label>
+                      <Input
+                        value={draft.contactUs.mapEmbedUrl || ""}
+                        placeholder="https://www.google.com/maps/embed?..."
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            contactUs: {
+                              ...draft.contactUs,
+                              mapEmbedUrl: extractMapEmbedUrl(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-1.5">
                       <Label>Google Maps Directions URL</Label>
                       <Input
                         value={draft.contactUs.directionsUrl}
-                        placeholder="https://maps.google.com/..."
+                        placeholder="https://maps.app.goo.gl/..."
                         onChange={(e) =>
                           setDraft({
                             ...draft,

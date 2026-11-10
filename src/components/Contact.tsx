@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Car, Navigation } from "lucide-react";
-import { useSiteData, ContactInfoCard } from "@/lib/siteData";
+import { useSiteData, ContactInfoCard, extractMapEmbedUrl } from "@/lib/siteData";
 import { toast } from "sonner";
 
 const iconMap = {
@@ -165,28 +165,60 @@ const Contact = () => {
                 </p>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="relative h-72 sm:h-96 px-4 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Click to view our location on Google Maps
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                {contactUs.mapEmbedUrl ? (
+                  <div>
+                    <div className="w-full h-72 sm:h-96 bg-muted">
+                      <iframe
+                        src={extractMapEmbedUrl(contactUs.mapEmbedUrl)}
+                        title={contactUs.mapTitle || "Voice Angel Bride Tabernacle Church Location"}
+                        className="w-full h-full border-0"
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    </div>
+                    <div className="p-4 sm:p-5 bg-card border-t border-border flex flex-col sm:flex-row gap-3 justify-center items-center">
                       <Button
-                        className="btn-primary"
+                        className="btn-primary w-full sm:w-auto"
                         onClick={() => handleActionClick(contactUs.directionsUrl)}
                       >
                         <Navigation className="w-4 h-4 mr-2" />
                         Get Directions
                       </Button>
-                      <Button variant="outline">
+                      <Button
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                        onClick={() => handleActionClick("#welcome")}
+                      >
                         <Car className="w-4 h-4 mr-2" />
                         Parking Info
                       </Button>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="relative h-72 sm:h-96 px-4 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
+                    <div className="text-center">
+                      <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Click to view our location on Google Maps
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        <Button
+                          className="btn-primary"
+                          onClick={() => handleActionClick(contactUs.directionsUrl)}
+                        >
+                          <Navigation className="w-4 h-4 mr-2" />
+                          Get Directions
+                        </Button>
+                        <Button variant="outline">
+                          <Car className="w-4 h-4 mr-2" />
+                          Parking Info
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

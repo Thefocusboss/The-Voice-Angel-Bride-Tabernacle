@@ -171,6 +171,7 @@ export interface SiteData {
     showMap: boolean;
     mapTitle: string;
     mapSubtitle: string;
+    mapEmbedUrl: string;
     directionsUrl: string;
     firstVisitTitle: string;
     firstVisitPoints: string[];
@@ -181,6 +182,13 @@ export interface SiteData {
     prayerInPerson: string;
   };
 }
+
+export const extractMapEmbedUrl = (input: string): string => {
+  const trimmed = input.trim();
+  if (!trimmed) return "";
+  const srcMatch = trimmed.match(/src=["']([^"']+)["']/i);
+  return srcMatch?.[1] || trimmed;
+};
 
 export const defaultSiteData: SiteData = {
   welcome: {
@@ -421,7 +429,7 @@ export const defaultSiteData: SiteData = {
           "Niger state",
         ],
         actionLabel: "Get Directions",
-        actionLink: "",
+        actionLink: "https://maps.app.goo.gl/nfi6e5qY6EVWTwDT6",
       },
       {
         id: "contact-phone",
@@ -463,8 +471,10 @@ export const defaultSiteData: SiteData = {
     showMap: true,
     mapTitle: "Find Us",
     mapSubtitle:
-      "Located in the heart of Gospel City, we're easy to find and excited to welcome you.",
-    directionsUrl: "",
+      "Located in Kwamba, Suleja, Niger State — we're easy to find and excited to welcome you.",
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d246.14605883135533!2d7.166570854981875!3d9.214128120133061!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x104dd30015fb9461%3A0xe80e378496a5d86b!2sVoice%20Angel%20Bride%20Tabernacle%20Church!5e0!3m2!1sen!2sng!4v1794336411268!5m2!1sen!2sng",
+    directionsUrl: "https://maps.app.goo.gl/nfi6e5qY6EVWTwDT6",
     firstVisitTitle: "Planning Your First Visit?",
     firstVisitPoints: [
       "Doors open 8:00 AM; Sunday School; Service starts 9:00 AM on Sundays",
@@ -545,7 +555,16 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
     contactUs: {
       ...defaultSiteData.contactUs,
       ...parsed.contactUs,
-      cards: parsed.contactUs?.cards || defaultSiteData.contactUs.cards,
+      mapEmbedUrl:
+        parsed.contactUs?.mapEmbedUrl ?? defaultSiteData.contactUs.mapEmbedUrl,
+      directionsUrl:
+        parsed.contactUs?.directionsUrl || defaultSiteData.contactUs.directionsUrl,
+      cards: (parsed.contactUs?.cards || defaultSiteData.contactUs.cards).map(
+        (card: ContactInfoCard) =>
+          card.id === "contact-location" && !card.actionLink
+            ? { ...card, actionLink: "https://maps.app.goo.gl/nfi6e5qY6EVWTwDT6" }
+            : card
+      ),
       firstVisitPoints:
         parsed.contactUs?.firstVisitPoints || defaultSiteData.contactUs.firstVisitPoints,
     },
