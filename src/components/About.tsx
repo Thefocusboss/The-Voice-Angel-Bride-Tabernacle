@@ -27,7 +27,7 @@ const About = () => {
       text: shareText,
       shareType: "tonic",
       itemId: podcast.id,
-      fallbackPath: "/#about",
+      fallbackPath: "/#daily-devotion-post",
       overrideUrl: audioLink,
       imageUrl: podcast.thumbnail,
       fileName: `morning-tonic-${podcast.id}`,
@@ -46,7 +46,7 @@ const About = () => {
       text,
       shareType: "post",
       itemId: post.id,
-      fallbackPath: "/#about",
+      fallbackPath: "/#daily-devotion-post",
       imageUrl: post.image,
       fileName: `morning-tonic-post-${post.id}`,
       copySuccessMessage: "Morning Tonic post link copied to clipboard!",
@@ -150,7 +150,7 @@ const About = () => {
 
         {/* Morning Tonic Section - Two Parts: Post Section & Play from Telegram */}
         {morningTonic.visible && (
-          <div className="bg-card rounded-2xl p-4 sm:p-8 shadow-lg space-y-10 sm:space-y-12">
+          <div id="morning-tonic" className="scroll-mt-20 bg-card rounded-2xl p-4 sm:p-8 shadow-lg space-y-10 sm:space-y-12">
             <div className="text-center">
               <h3 className="text-2xl sm:text-3xl font-bold mb-3">{morningTonic.sectionTitle}</h3>
               <p className="text-muted-foreground">{morningTonic.sectionSubtitle}</p>
@@ -158,7 +158,7 @@ const About = () => {
 
             {/* Part 1: Portrait Post Section */}
             {morningTonic.posts && morningTonic.posts.length > 0 && (
-              <div>
+              <div id="daily-devotion-post" className="scroll-mt-24">
                 <h4 className="text-xl font-bold text-center mb-6">
                   {morningTonic.postsHeading || "Daily Devotion Post"}
                 </h4>
@@ -214,7 +214,7 @@ const About = () => {
             )}
 
             {/* Part 2: Play from Telegram Audio Cards */}
-            <div className="pt-4 border-t border-border/60">
+            <div id="play-from-telegram" className="scroll-mt-24 pt-4 border-t border-border/60">
               <h4 className="text-xl font-bold text-center mb-6">
                 {morningTonic.telegramHeading || "Play from Telegram"}
               </h4>

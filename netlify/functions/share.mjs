@@ -55,7 +55,7 @@ export default async (req) => {
           description:
             `${datePrefix}${post.description || "Read, Reflect & Pray with Voice Angel Bride Tabernacle."}`,
           image: post.image || "/morning-tonic-post.jpg",
-          redirect: "/#about",
+          redirect: "/#daily-devotion-post",
         };
       }
     } else if (type === "tonic") {
@@ -75,7 +75,7 @@ export default async (req) => {
           title: `Morning Tonic${dateText} — ${preacher}`,
           description: `Listen to Morning Tonic${dateText} by ${preacher} at Voice Angel Bride Tabernacle.`,
           image: item.thumbnail || "/morning-tonic-telegram.jpg",
-          redirect: "/#about",
+          redirect: "/#play-from-telegram",
         };
       }
     } else if (type === "sermon") {

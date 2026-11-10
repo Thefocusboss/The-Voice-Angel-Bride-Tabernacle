@@ -28,12 +28,49 @@ const Index = () => {
   const [announcementOpen, setAnnouncementOpen] = useState(false);
 
   useEffect(() => {
-    if (specialAnnouncement.visible) {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    const shareType = params.get("type");
+    const isDirectSectionLink = Boolean(hash && hash !== "#home") || Boolean(shareType);
+
+    if (specialAnnouncement.visible && !isDirectSectionLink) {
       setAnnouncementOpen(true);
     } else {
       setAnnouncementOpen(false);
     }
   }, [specialAnnouncement.visible]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shareType = params.get("type");
+    let targetId = window.location.hash ? window.location.hash.slice(1) : "";
+
+    if (!targetId && shareType) {
+      const typeMap: Record<string, string> = {
+        post: "daily-devotion-post",
+        tonic: "play-from-telegram",
+        sermon: "sermons",
+        event: "events",
+      };
+      targetId = typeMap[shareType] || "";
+    }
+
+    if (!targetId) return;
+
+    const scrollToTarget = () => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    const t1 = window.setTimeout(scrollToTarget, 150);
+    const t2 = window.setTimeout(scrollToTarget, 600);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 300);
