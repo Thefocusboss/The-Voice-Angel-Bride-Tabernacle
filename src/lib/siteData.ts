@@ -265,51 +265,126 @@ export const defaultSiteData: SiteData = {
 
 const STORAGE_KEY = "vabt_site_data_v1";
 const UPDATE_EVENT = "vabt_site_data_updated";
+const API_ENDPOINT = "/.netlify/functions/site-data";
+
+export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): SiteData => {
+  if (!parsed || typeof parsed !== "object") return defaultSiteData;
+  return {
+    liveServices: { ...defaultSiteData.liveServices, ...parsed.liveServices },
+    morningTonic: {
+      ...defaultSiteData.morningTonic,
+      ...parsed.morningTonic,
+      items: (parsed.morningTonic?.items || defaultSiteData.morningTonic.items).map(
+        (item: MorningTonicItem) => ({
+          ...item,
+          preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
+        })
+      ),
+    },
+    tithesAndOfferings: {
+      ...defaultSiteData.tithesAndOfferings,
+      ...parsed.tithesAndOfferings,
+    },
+    upcomingEvents: {
+      ...defaultSiteData.upcomingEvents,
+      ...parsed.upcomingEvents,
+    },
+    specialAnnouncement: {
+      ...defaultSiteData.specialAnnouncement,
+      ...parsed.specialAnnouncement,
+    },
+  };
+};
 
 export const getSiteData = (): SiteData => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultSiteData;
-    const parsed = JSON.parse(raw);
-    return {
-      liveServices: { ...defaultSiteData.liveServices, ...parsed.liveServices },
-      morningTonic: {
-        ...defaultSiteData.morningTonic,
-        ...parsed.morningTonic,
-        items: (parsed.morningTonic?.items || defaultSiteData.morningTonic.items).map(
-          (item: MorningTonicItem) => ({
-            ...item,
-            preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
-          })
-        ),
-      },
-      tithesAndOfferings: {
-        ...defaultSiteData.tithesAndOfferings,
-        ...parsed.tithesAndOfferings,
-      },
-      upcomingEvents: {
-        ...defaultSiteData.upcomingEvents,
-        ...parsed.upcomingEvents,
-      },
-      specialAnnouncement: {
-        ...defaultSiteData.specialAnnouncement,
-        ...parsed.specialAnnouncement,
-      },
-    };
+    return mergeSiteData(JSON.parse(raw));
   } catch {
     return defaultSiteData;
   }
 };
 
 export const saveSiteData = (data: SiteData) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  const merged = mergeSiteData(data);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   window.dispatchEvent(new Event(UPDATE_EVENT));
+  return merged;
 };
 
 export const resetSiteData = () => {
   localStorage.removeItem(STORAGE_KEY);
   window.dispatchEvent(new Event(UPDATE_EVENT));
   return defaultSiteData;
+};
+
+let remoteSyncPromise: Promise<SiteData | null> | null = null;
+let mutationVersion = 0;
+
+export const fetchRemoteSiteData = async (force = false): Promise<SiteData | null> => {
+  if (!force && remoteSyncPromise) {
+    return remoteSyncPromise;
+  }
+
+  const startVersion = mutationVersion;
+  remoteSyncPromise = (async () => {
+    try {
+      const res = await fetch(API_ENDPOINT, {
+        method: "GET",
+        cache: "no-store",
+      });
+      const contentType = res.headers.get("content-type") || "";
+      if (!res.ok || !contentType.includes("application/json")) {
+        return null;
+      }
+      const payload = await res.json();
+      if (startVersion !== mutationVersion) {
+        return null;
+      }
+      if (payload?.exists && payload?.data) {
+        const merged = saveSiteData(payload.data);
+        return merged;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  })();
+
+  return remoteSyncPromise;
+};
+
+export const saveRemoteSiteData = async (data: SiteData): Promise<boolean> => {
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const contentType = res.headers.get("content-type") || "";
+    if (res.status === 404 || !contentType.includes("application/json")) {
+      // Running locally without Netlify Functions; localStorage save still succeeded
+      return false;
+    }
+    if (!res.ok) {
+      throw new Error("Server failed to save site updates");
+    }
+    return true;
+  } catch (err) {
+    if (err instanceof Error && err.message === "Server failed to save site updates") {
+      throw err;
+    }
+    return false;
+  }
+};
+
+export const resetRemoteSiteData = async (): Promise<void> => {
+  try {
+    await fetch(API_ENDPOINT, { method: "DELETE" });
+  } catch {
+    // Ignore when running locally without Netlify Functions
+  }
 };
 
 export const useSiteData = () => {
@@ -319,20 +394,34 @@ export const useSiteData = () => {
     const handleUpdate = () => setData(getSiteData());
     window.addEventListener(UPDATE_EVENT, handleUpdate);
     window.addEventListener("storage", handleUpdate);
+
+    fetchRemoteSiteData().then((remote) => {
+      if (remote) {
+        setData(remote);
+      }
+    });
+
     return () => {
       window.removeEventListener(UPDATE_EVENT, handleUpdate);
       window.removeEventListener("storage", handleUpdate);
     };
   }, []);
 
-  const updateData = (next: SiteData) => {
-    setData(next);
-    saveSiteData(next);
+  const updateData = async (next: SiteData): Promise<{ remoteSaved: boolean }> => {
+    mutationVersion++;
+    const merged = saveSiteData(next);
+    remoteSyncPromise = Promise.resolve(merged);
+    setData(merged);
+    const remoteSaved = await saveRemoteSiteData(merged);
+    return { remoteSaved };
   };
 
-  const resetData = () => {
+  const resetData = async (): Promise<SiteData> => {
+    mutationVersion++;
     const defaults = resetSiteData();
+    remoteSyncPromise = Promise.resolve(null);
     setData(defaults);
+    await resetRemoteSiteData();
     return defaults;
   };
 

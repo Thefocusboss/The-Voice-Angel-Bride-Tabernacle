@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useSiteData,
   MorningTonicItem,
@@ -15,7 +15,6 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -77,6 +76,19 @@ const saveAdminCredentials = (creds: AdminCredentials) => {
 const Admin = () => {
   const { data, updateData, resetData } = useSiteData();
   const [draft, setDraft] = useState(data);
+  const prevDataRef = useRef(JSON.stringify(data));
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Sync draft with incoming remote server data if user hasn't started editing yet
+  useEffect(() => {
+    const nextSerialized = JSON.stringify(data);
+    if (nextSerialized !== prevDataRef.current) {
+      if (JSON.stringify(draft) === prevDataRef.current) {
+        setDraft(data);
+      }
+      prevDataRef.current = nextSerialized;
+    }
+  }, [data, draft]);
 
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -157,22 +169,27 @@ const Admin = () => {
     setConfirmSaveOpen(true);
   };
 
-  const handleConfirmSave = () => {
+  const handleConfirmSave = async () => {
+    setIsSaving(true);
     try {
-      updateData(draft);
+      await updateData(draft);
+      prevDataRef.current = JSON.stringify(draft);
       setConfirmSaveOpen(false);
       toast.success("Changes saved and published to the website!");
     } catch {
       setConfirmSaveOpen(false);
       toast.error(
-        "Failed to save changes. Uploaded images may exceed browser storage size—try using a smaller image or image URL."
+        "Failed to save changes. Please try again or use a smaller image/URL."
       );
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (window.confirm("Are you sure you want to reset all sections back to their default content?")) {
-      const defaults = resetData();
+      const defaults = await resetData();
+      prevDataRef.current = JSON.stringify(defaults);
       setDraft(defaults);
       toast.success("All sections reset to default content.");
     }
@@ -1443,10 +1460,15 @@ const Admin = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSave} className="bg-primary text-primary-foreground hover:bg-primary-glow">
-              Confirm & Save
-            </AlertDialogAction>
+            <AlertDialogCancel disabled={isSaving}>Cancel</AlertDialogCancel>
+            <Button
+              type="button"
+              onClick={handleConfirmSave}
+              disabled={isSaving}
+              className="bg-primary text-primary-foreground hover:bg-primary-glow"
+            >
+              {isSaving ? "Saving..." : "Confirm & Save"}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
