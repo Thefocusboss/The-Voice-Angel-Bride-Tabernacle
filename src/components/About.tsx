@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X } from "lucide-react";
-import { useSiteData, MorningTonicItem } from "@/lib/siteData";
+import { useSiteData, MorningTonicItem, MorningTonicPostItem } from "@/lib/siteData";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -55,17 +55,15 @@ const About = () => {
     }
   };
 
-  const handleShareTonic = async (podcast: MorningTonicItem) => {
-    const shareUrl = podcast.link?.trim() || `${window.location.origin}/#about`;
-    const shareText = `Listen to "${podcast.title}" by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
-
+  const shareContent = async (
+    title: string,
+    text: string,
+    url: string,
+    successMessage: string
+  ) => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: podcast.title,
-          text: shareText,
-          url: shareUrl,
-        });
+        await navigator.share({ title, text, url });
         return;
       } catch (err) {
         if ((err as Error)?.name === "AbortError") return;
@@ -73,11 +71,43 @@ const About = () => {
     }
 
     try {
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      toast.success("Morning Tonic link copied to clipboard!");
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      toast.success(successMessage);
     } catch {
       toast.error("Could not copy link. Please copy it manually from your browser.");
     }
+  };
+
+  const handleShareTonic = (podcast: MorningTonicItem) => {
+    const shareUrl = podcast.link?.trim() || `${window.location.origin}/#about`;
+    const shareText = `Listen to "${podcast.title}" by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
+    return shareContent(podcast.title, shareText, shareUrl, "Morning Tonic link copied to clipboard!");
+  };
+
+  const handleSharePost = async (post: MorningTonicPostItem) => {
+    const shareUrl = `${window.location.origin}/#about`;
+    const title = post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle";
+    const text = post.description
+      ? `${title}\n${post.description}`
+      : `${title} - Voice Angel Bride Tabernacle`;
+
+    if (navigator.share && navigator.canShare && post.image) {
+      try {
+        const res = await fetch(post.image);
+        const blob = await res.blob();
+        const file = new File([blob], "morning-tonic-post.jpg", {
+          type: blob.type || "image/jpeg",
+        });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title, text, url: shareUrl, files: [file] });
+          return;
+        }
+      } catch (err) {
+        if ((err as Error)?.name === "AbortError") return;
+      }
+    }
+
+    return shareContent(title, text, shareUrl, "Morning Tonic post link copied to clipboard!");
   };
 
   return (
@@ -205,20 +235,26 @@ const About = () => {
                           className="w-full aspect-[4/5] object-cover object-center"
                         />
                       </div>
-                      {(post.title || post.description) && (
-                        <CardContent className="p-4 sm:p-5 text-center">
-                          {post.title && (
-                            <h5 className="font-semibold text-base sm:text-lg mb-1">
-                              {post.title}
-                            </h5>
-                          )}
-                          {post.description && (
-                            <p className="text-muted-foreground text-sm">
-                              {post.description}
-                            </p>
-                          )}
-                        </CardContent>
-                      )}
+                      <CardContent className="p-4 sm:p-5 text-center">
+                        {post.title && (
+                          <h5 className="font-semibold text-base sm:text-lg mb-1">
+                            {post.title}
+                          </h5>
+                        )}
+                        {post.description && (
+                          <p className="text-muted-foreground text-sm mb-4">
+                            {post.description}
+                          </p>
+                        )}
+                        <Button
+                          variant="outline"
+                          className="w-full gap-2"
+                          onClick={() => handleSharePost(post)}
+                        >
+                          <Share2 className="w-4 h-4" />
+                          Share
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>
