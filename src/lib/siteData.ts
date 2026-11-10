@@ -69,6 +69,14 @@ export const getYouTubeThumbnailUrl = (url: string): string | null => {
   return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
 };
 
+export const getYouTubeEmbedUrl = (url: string): string => {
+  const id = extractYouTubeVideoId(url);
+  if (id) {
+    return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
+  }
+  return url;
+};
+
 export interface ExtraAnnouncementItem {
   id: string;
   title: string;
@@ -76,7 +84,44 @@ export interface ExtraAnnouncementItem {
   thumbnail?: string;
 }
 
+export interface ContactInfoCard {
+  id: string;
+  iconType: "location" | "phone" | "mail" | "clock";
+  title: string;
+  details: string[];
+  actionLabel: string;
+  actionLink?: string;
+}
+
 export interface SiteData {
+  welcome: {
+    visible: boolean;
+    showFeaturedVideo: boolean;
+    featuredVideoUrl: string;
+    heading: string;
+    paragraph1: string;
+    paragraph2: string;
+    pastorName: string;
+    pastorRole: string;
+    pastorImage: string;
+    buttonText: string;
+  };
+  aboutVabt: {
+    visible: boolean;
+    sectionTitle: string;
+    sectionSubtitle: string;
+    foundationTitle: string;
+    foundationParagraph1: string;
+    foundationParagraph2: string;
+    agesTitle: string;
+    agesDescription: string;
+    missionTitle: string;
+    missionParagraph1: string;
+    missionParagraph2: string;
+    revelationTitle: string;
+    revelationDescription: string;
+    revelationImage: string;
+  };
   liveServices: {
     visible: boolean;
     sectionTitle: string;
@@ -116,9 +161,65 @@ export interface SiteData {
     secondaryButtonText: string;
     extraAnnouncements: ExtraAnnouncementItem[];
   };
+  contactUs: {
+    visible: boolean;
+    sectionTitle: string;
+    sectionSubtitle: string;
+    formTitle: string;
+    formSubtitle: string;
+    cards: ContactInfoCard[];
+    showMap: boolean;
+    mapTitle: string;
+    mapSubtitle: string;
+    directionsUrl: string;
+    firstVisitTitle: string;
+    firstVisitPoints: string[];
+    needPrayerTitle: string;
+    needPrayerDescription: string;
+    prayerLine: string;
+    prayerEmail: string;
+    prayerInPerson: string;
+  };
 }
 
 export const defaultSiteData: SiteData = {
+  welcome: {
+    visible: true,
+    showFeaturedVideo: true,
+    featuredVideoUrl: "https://www.youtube.com/embed/5CJS7QGtbok?rel=0&modestbranding=1",
+    heading: "Welcome Message",
+    paragraph1:
+      '"I want to specially welcome you to this Gospel centre. No doubt you didn\'t stumble into this site by chance but by God\'s divine arrangement. Possibly you have a need or a question that needs urgent attention."',
+    paragraph2:
+      '"The good news of the gospel of Jesus Christ is a heart warming news that soothes even the most turbulent soul. You can confidently feel free to share with us as we promise to be of help in whatever little way that we can."',
+    pastorName: "Rev. Michael Chuzie Chukwuezi",
+    pastorRole: "Pastor-in-charge",
+    pastorImage: "/Pastor.jpg",
+    buttonText: "Contact Pastor Michael",
+  },
+  aboutVabt: {
+    visible: true,
+    sectionTitle: "About VABT",
+    sectionSubtitle:
+      "Learn about our history, mission, and the end-time message we proclaim to the world.",
+    foundationTitle: "Our Foundation",
+    foundationParagraph1:
+      "The Voice Angel Bride Tabernacle, formerly known as Omega Bride Fellowship church, is an End time message church. We proclaim the original Apostolic Faith and Belief of the Bible promise to send a Voice at the end of the Gentile dispensation.",
+    foundationParagraph2:
+      "We believe in calling the Bride out of the church denominations into the living reality of the living God, confirming the Bible Truth that Jesus Christ is the same yesterday, today, and forever.",
+    agesTitle: "Seven Church Ages",
+    agesDescription:
+      "We believe the Gentiles were allotted seven church age dispensations before the Gospel returns back to the Jews as the original vine according to the mystery of God revealed by Apostle Paul in Romans chapter 11.",
+    missionTitle: "Our Mission",
+    missionParagraph1:
+      "As a Church, we stand unwavering and committed to the teachings of God's prophet messenger William Marion Branham and the Apostolic Echo Voice messenger Joseph Coleman of New York City.",
+    missionParagraph2:
+      "We believe that every true ministry of Ephesians 4:11-13 will stand identified with God's prophet to say just what those tapes say.",
+    revelationTitle: "End Time Revelation",
+    revelationDescription:
+      "At the close of the seven church ages, we see Jesus standing at the door outside the church knocking to enter. The son of man is revealed to this Age through a prophetic office of the seventh angel messenger.",
+    revelationImage: "/william marrion branham.jpg",
+  },
   liveServices: {
     visible: true,
     sectionTitle: "Live Services on YouTube",
@@ -300,6 +401,83 @@ export const defaultSiteData: SiteData = {
     secondaryButtonText: "Share Announcement",
     extraAnnouncements: [],
   },
+  contactUs: {
+    visible: true,
+    sectionTitle: "Contact Us",
+    sectionSubtitle:
+      "We'd love to hear from you! Get in touch with us for prayer requests, questions, or to plan your visit.",
+    formTitle: "Send Us a Message",
+    formSubtitle:
+      "Fill out the form below and we'll get back to you as soon as possible.",
+    cards: [
+      {
+        id: "contact-location",
+        iconType: "location",
+        title: "Our Location",
+        details: [
+          "Our Location",
+          "Home school Avenue",
+          "Red cross Kwamba",
+          "Niger state",
+        ],
+        actionLabel: "Get Directions",
+        actionLink: "",
+      },
+      {
+        id: "contact-phone",
+        iconType: "phone",
+        title: "Phone Numbers",
+        details: [
+          "Church Office: (555) 123-4567",
+          "Pastor's Line: (555) 987-6543",
+          "Prayer Line: (555) 456-7890",
+        ],
+        actionLabel: "Call Now",
+        actionLink: "",
+      },
+      {
+        id: "contact-email",
+        iconType: "mail",
+        title: "Email Addresses",
+        details: [
+          "info@vabtministries.org",
+          "pastor@vabtministries.org",
+          "prayer@vabtministries.org",
+        ],
+        actionLabel: "Send Email",
+        actionLink: "mailto:info@vabtministries.org",
+      },
+      {
+        id: "contact-times",
+        iconType: "clock",
+        title: "Service Times",
+        details: [
+          "Sunday Worship: Doors open 8:00 AM, Sunday School, Service starts 9:00 AM",
+          "Wednesday Service: Doors open 5:30 PM, Service starts 6:00 PM",
+          "Friday Service: Doors open 5:30 PM, Service starts 6:00 PM",
+        ],
+        actionLabel: "View Schedule",
+        actionLink: "#events",
+      },
+    ],
+    showMap: true,
+    mapTitle: "Find Us",
+    mapSubtitle:
+      "Located in the heart of Gospel City, we're easy to find and excited to welcome you.",
+    directionsUrl: "",
+    firstVisitTitle: "Planning Your First Visit?",
+    firstVisitPoints: [
+      "Doors open 8:00 AM; Sunday School; Service starts 9:00 AM on Sundays",
+      "Casual or formal dress - come as you are!",
+      "Free parking available on-site and nearby streets",
+    ],
+    needPrayerTitle: "Need Prayer?",
+    needPrayerDescription:
+      "Our prayer team is available to pray with you and support you through any challenges you're facing. Don't hesitate to reach out - we believe in the power of prayer and would be honored to stand with you.",
+    prayerLine: "(555) 456-7890",
+    prayerEmail: "prayer@vabtministries.org",
+    prayerInPerson: "Before or after any service",
+  },
 };
 
 const STORAGE_KEY = "vabt_site_data_v1";
@@ -309,6 +487,8 @@ const API_ENDPOINT = "/.netlify/functions/site-data";
 export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): SiteData => {
   if (!parsed || typeof parsed !== "object") return defaultSiteData;
   return {
+    welcome: { ...defaultSiteData.welcome, ...parsed.welcome },
+    aboutVabt: { ...defaultSiteData.aboutVabt, ...parsed.aboutVabt },
     liveServices: { ...defaultSiteData.liveServices, ...parsed.liveServices },
     morningTonic: {
       ...defaultSiteData.morningTonic,
@@ -361,6 +541,13 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
       ...defaultSiteData.specialAnnouncement,
       ...parsed.specialAnnouncement,
       extraAnnouncements: parsed.specialAnnouncement?.extraAnnouncements || [],
+    },
+    contactUs: {
+      ...defaultSiteData.contactUs,
+      ...parsed.contactUs,
+      cards: parsed.contactUs?.cards || defaultSiteData.contactUs.cards,
+      firstVisitPoints:
+        parsed.contactUs?.firstVisitPoints || defaultSiteData.contactUs.firstVisitPoints,
     },
   };
 };

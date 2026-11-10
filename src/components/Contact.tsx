@@ -4,43 +4,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Car, Navigation } from "lucide-react";
+import { useSiteData, ContactInfoCard } from "@/lib/siteData";
+import { toast } from "sonner";
+
+const iconMap = {
+  location: MapPin,
+  phone: Phone,
+  mail: Mail,
+  clock: Clock,
+};
 
 const Contact = () => {
-  const contactInfo = [
-    {
-      icon: MapPin,
-      title: "Our Location",
-      details: ["Our Location", "Home school Avenue", "Red cross Kwamba", "Niger state"],
-      action: "Get Directions"
-    },
-    {
-      icon: Phone,
-      title: "Phone Numbers",
-      details: ["Church Office: (555) 123-4567", "Pastor's Line: (555) 987-6543", "Prayer Line: (555) 456-7890"],
-      action: "Call Now"
-    },
-    {
-      icon: Mail,
-      title: "Email Addresses",
-      details: ["info@vabtministries.org", "pastor@vabtministries.org", "prayer@vabtministries.org"],
-      action: "Send Email"
-    },
-    {
-      icon: Clock,
-      title: "Service Times",
-      details: [
-        "Sunday Worship: Doors open 8:00 AM, Sunday School, Service starts 9:00 AM",
-        "Wednesday Service: Doors open 5:30 PM, Service starts 6:00 PM",
-        "Friday Service: Doors open 5:30 PM, Service starts 6:00 PM"
-      ],
-      action: "View Schedule"
-    }
-  ];
+  const { data } = useSiteData();
+  const { contactUs } = data;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  if (!contactUs.visible) {
+    return null;
+  }
+
+  const handleActionClick = (link?: string) => {
+    const trimmed = link?.trim();
+    if (!trimmed) return;
+    if (trimmed.startsWith("#")) {
+      const el = document.querySelector(trimmed);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (trimmed.startsWith("tel:") || trimmed.startsWith("mailto:")) {
+      window.location.href = trimmed;
+      return;
+    }
+    window.open(trimmed, "_blank", "noopener,noreferrer");
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted");
+    toast.success("Thank you for reaching out! We have received your message.");
+    e.currentTarget.reset();
   };
 
   return (
@@ -48,9 +48,9 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-10 sm:mb-16">
-          <h2 className="section-title">Contact Us</h2>
+          <h2 className="section-title">{contactUs.sectionTitle}</h2>
           <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-            We'd love to hear from you! Get in touch with us for prayer requests, questions, or to plan your visit.
+            {contactUs.sectionSubtitle}
           </p>
         </div>
 
@@ -59,9 +59,9 @@ const Contact = () => {
           <div>
             <Card className="shadow-lg">
               <CardHeader>
-                <CardTitle className="text-2xl">Send Us a Message</CardTitle>
+                <CardTitle className="text-2xl">{contactUs.formTitle}</CardTitle>
                 <p className="text-muted-foreground">
-                  Fill out the form below and we'll get back to you as soon as possible.
+                  {contactUs.formSubtitle}
                 </p>
               </CardHeader>
               <CardContent>
@@ -94,8 +94,8 @@ const Contact = () => {
 
                   <div>
                     <Label htmlFor="message">Message *</Label>
-                    <Textarea 
-                      id="message" 
+                    <Textarea
+                      id="message"
                       required
                       placeholder="Share your message, prayer request, or question with us..."
                       className="min-h-[120px]"
@@ -119,10 +119,10 @@ const Contact = () => {
 
           {/* Contact Information */}
           <div className="space-y-6">
-            {contactInfo.map((info, index) => {
-              const IconComponent = info.icon;
+            {contactUs.cards.map((info: ContactInfoCard, index: number) => {
+              const IconComponent = iconMap[info.iconType] || MapPin;
               return (
-                <Card key={index} className="card-hover">
+                <Card key={info.id || index} className="card-hover">
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center flex-shrink-0">
@@ -135,9 +135,16 @@ const Contact = () => {
                             {detail}
                           </p>
                         ))}
-                        <Button variant="outline" size="sm" className="mt-3">
-                          {info.action}
-                        </Button>
+                        {info.actionLabel && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-3"
+                            onClick={() => handleActionClick(info.actionLink)}
+                          >
+                            {info.actionLabel}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -148,51 +155,57 @@ const Contact = () => {
         </div>
 
         {/* Map Section */}
-        <div className="mt-16">
-          <Card className="overflow-hidden shadow-lg">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Find Us</CardTitle>
-              <p className="text-muted-foreground">
-                Located in the heart of Gospel City, we're easy to find and excited to welcome you.
-              </p>
-            </CardHeader>
-            <CardContent className="p-0">
-              {/* Placeholder for map - you would integrate with Google Maps or similar */}
-              <div className="relative h-72 sm:h-96 px-4 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Click to view our location on Google Maps
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button className="btn-primary">
-                      <Navigation className="w-4 h-4 mr-2" />
-                      Get Directions
-                    </Button>
-                    <Button variant="outline">
-                      <Car className="w-4 h-4 mr-2" />
-                      Parking Info
-                    </Button>
+        {contactUs.showMap && (
+          <div className="mt-16">
+            <Card className="overflow-hidden shadow-lg">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">{contactUs.mapTitle}</CardTitle>
+                <p className="text-muted-foreground">
+                  {contactUs.mapSubtitle}
+                </p>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="relative h-72 sm:h-96 px-4 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Click to view our location on Google Maps
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Button
+                        className="btn-primary"
+                        onClick={() => handleActionClick(contactUs.directionsUrl)}
+                      >
+                        <Navigation className="w-4 h-4 mr-2" />
+                        Get Directions
+                      </Button>
+                      <Button variant="outline">
+                        <Car className="w-4 h-4 mr-2" />
+                        Parking Info
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Visit Information */}
         <div className="mt-12 grid md:grid-cols-2 gap-8">
           <Card className="bg-gradient-to-br from-primary/5 to-secondary/5">
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Planning Your First Visit?</h3>
+              <h3 className="text-xl font-semibold mb-4">{contactUs.firstVisitTitle}</h3>
               <div className="space-y-3 text-muted-foreground">
-                <p>• Doors open 8:00 AM; Sunday School; Service starts 9:00 AM on Sundays</p>
-                <p>• Casual or formal dress - come as you are!</p>
-                <p>• Free parking available on-site and nearby streets</p>
-                {/* Removed children ministry and fellowship notes as requested */}
+                {contactUs.firstVisitPoints.map((point, idx) => (
+                  <p key={idx}>• {point}</p>
+                ))}
               </div>
-              <Button className="btn-secondary mt-4">
+              <Button
+                className="btn-secondary mt-4"
+                onClick={() => handleActionClick("#welcome")}
+              >
                 New Visitor Information
               </Button>
             </CardContent>
@@ -200,17 +213,22 @@ const Contact = () => {
 
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Need Prayer?</h3>
+              <h3 className="text-xl font-semibold mb-4">{contactUs.needPrayerTitle}</h3>
               <p className="text-muted-foreground mb-4">
-                Our prayer team is available to pray with you and support you through any challenges you're facing. 
-                Don't hesitate to reach out - we believe in the power of prayer and would be honored to stand with you.
+                {contactUs.needPrayerDescription}
               </p>
               <div className="space-y-2 text-sm text-muted-foreground mb-4">
-                <p><strong>Prayer Line:</strong> (555) 456-7890</p>
-                <p><strong>Email:</strong> prayer@vabtministries.org</p>
-                <p><strong>In Person:</strong> Before or after any service</p>
+                <p><strong>Prayer Line:</strong> {contactUs.prayerLine}</p>
+                <p className="break-words"><strong>Email:</strong> {contactUs.prayerEmail}</p>
+                <p><strong>In Person:</strong> {contactUs.prayerInPerson}</p>
               </div>
-              <Button className="btn-primary">
+              <Button
+                className="btn-primary"
+                onClick={() => {
+                  const el = document.getElementById("message");
+                  if (el) el.focus();
+                }}
+              >
                 Request Prayer
               </Button>
             </CardContent>

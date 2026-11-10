@@ -6,6 +6,7 @@ import {
   UpcomingEventItem,
   LiveServiceItem,
   ExtraAnnouncementItem,
+  ContactInfoCard,
   getYouTubeThumbnailUrl,
   getFormattedToday,
 } from "@/lib/siteData";
@@ -46,6 +47,9 @@ import {
   ShieldCheck,
   Youtube,
   Link2,
+  Phone,
+  Heart,
+  BookOpen,
 } from "lucide-react";
 
 const ADMIN_CRED_KEY = "vabt_admin_credentials_v1";
@@ -453,6 +457,16 @@ const Admin = () => {
     }));
   };
 
+  // Contact Us card helper
+  const updateContactCard = (index: number, patch: Partial<ContactInfoCard>) => {
+    const cards = [...draft.contactUs.cards];
+    cards[index] = { ...cards[index], ...patch };
+    setDraft((prev) => ({
+      ...prev,
+      contactUs: { ...prev.contactUs, cards },
+    }));
+  };
+
   // Render Login Page when not authenticated
   if (!isAuthenticated) {
     return (
@@ -594,7 +608,7 @@ const Admin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Live Services Toggle */}
               <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
                 <div className="flex items-center space-x-3">
@@ -724,38 +738,600 @@ const Admin = () => {
                   }
                 />
               </div>
+
+              {/* Welcome Message Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.welcome.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">Welcome Message</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.welcome.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.welcome.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      welcome: { ...draft.welcome, visible: checked },
+                    })
+                  }
+                />
+              </div>
+
+              {/* About VABT Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.aboutVabt.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">About VABT</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.aboutVabt.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.aboutVabt.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      aboutVabt: { ...draft.aboutVabt, visible: checked },
+                    })
+                  }
+                />
+              </div>
+
+              {/* Contact Us Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.contactUs.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">Contact Us</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.contactUs.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.contactUs.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      contactUs: { ...draft.contactUs, visible: checked },
+                    })
+                  }
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Detailed Section Editors */}
-        <Tabs defaultValue="live-services" className="space-y-6">
-          <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1 w-full h-auto p-1 bg-background border">
-            <TabsTrigger value="live-services" className="py-3 gap-2">
+        <Tabs defaultValue="welcome" className="space-y-6">
+          <TabsList className="flex flex-wrap gap-1 w-full h-auto p-1.5 bg-background border justify-start">
+            <TabsTrigger value="welcome" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
+              <Heart className="w-4 h-4" />
+              Welcome
+            </TabsTrigger>
+            <TabsTrigger value="live-services" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Youtube className="w-4 h-4" />
               Live Services
             </TabsTrigger>
-            <TabsTrigger value="morning-tonic" className="py-3 gap-2">
+            <TabsTrigger value="about-vabt" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
+              <BookOpen className="w-4 h-4" />
+              About VABT
+            </TabsTrigger>
+            <TabsTrigger value="morning-tonic" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Sparkles className="w-4 h-4" />
               Morning Tonic
             </TabsTrigger>
-            <TabsTrigger value="tithes" className="py-3 gap-2">
+            <TabsTrigger value="tithes" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Church className="w-4 h-4" />
               Tithes & Offerings
             </TabsTrigger>
-            <TabsTrigger value="events" className="py-3 gap-2">
+            <TabsTrigger value="events" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Calendar className="w-4 h-4" />
               Upcoming Events
             </TabsTrigger>
-            <TabsTrigger value="announcement" className="py-3 gap-2">
+            <TabsTrigger value="announcement" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Megaphone className="w-4 h-4" />
-              Special Announcement
+              Announcement
             </TabsTrigger>
-            <TabsTrigger value="settings" className="py-3 gap-2">
+            <TabsTrigger value="contact" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
+              <Phone className="w-4 h-4" />
+              Contact Us
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Settings className="w-4 h-4" />
               Settings
             </TabsTrigger>
           </TabsList>
+
+          {/* WELCOME MESSAGE EDITOR */}
+          <TabsContent value="welcome" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Welcome Message Section</CardTitle>
+                  <CardDescription>
+                    Edit the featured video, pastor's welcome message, pastor details, and portrait photo.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="wm-visible">Section Visible</Label>
+                  <Switch
+                    id="wm-visible"
+                    checked={draft.welcome.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        welcome: { ...draft.welcome, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Featured Video Settings */}
+                <div className="p-4 rounded-xl border bg-muted/30 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="wm-video-visible" className="font-semibold">
+                      Featured YouTube Video (Above Welcome Message)
+                    </Label>
+                    <Switch
+                      id="wm-video-visible"
+                      checked={draft.welcome.showFeaturedVideo}
+                      onCheckedChange={(checked) =>
+                        setDraft({
+                          ...draft,
+                          welcome: { ...draft.welcome, showFeaturedVideo: checked },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>YouTube Video Link or Embed URL</Label>
+                    <Input
+                      value={draft.welcome.featuredVideoUrl}
+                      placeholder="https://youtu.be/... or https://www.youtube.com/embed/..."
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          welcome: { ...draft.welcome, featuredVideoUrl: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* Pastor Welcome Content */}
+                <div className="grid md:grid-cols-3 gap-6 items-start">
+                  <div className="space-y-3">
+                    <Label>Pastor Portrait Photo</Label>
+                    <div className="h-56 rounded-xl overflow-hidden border bg-muted flex items-center justify-center">
+                      {draft.welcome.pastorImage ? (
+                        <img
+                          src={draft.welcome.pastorImage}
+                          alt={draft.welcome.pastorName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No photo set</span>
+                      )}
+                    </div>
+                    <Input
+                      value={draft.welcome.pastorImage}
+                      placeholder="/Pastor.jpg or https://..."
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          welcome: { ...draft.welcome, pastorImage: e.target.value },
+                        })
+                      }
+                    />
+                    <label className="inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Pastor Photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleImageUpload(file, (dataUrl) =>
+                              setDraft({
+                                ...draft,
+                                welcome: { ...draft.welcome, pastorImage: dataUrl },
+                              })
+                            );
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+
+                  <div className="md:col-span-2 space-y-4">
+                    <div className="space-y-2">
+                      <Label>Section Heading</Label>
+                      <Input
+                        value={draft.welcome.heading}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            welcome: { ...draft.welcome, heading: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Welcome Paragraph 1</Label>
+                      <Textarea
+                        rows={3}
+                        value={draft.welcome.paragraph1}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            welcome: { ...draft.welcome, paragraph1: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Welcome Paragraph 2</Label>
+                      <Textarea
+                        rows={3}
+                        value={draft.welcome.paragraph2}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            welcome: { ...draft.welcome, paragraph2: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Pastor's Name</Label>
+                        <Input
+                          value={draft.welcome.pastorName}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              welcome: { ...draft.welcome, pastorName: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Title / Role</Label>
+                        <Input
+                          value={draft.welcome.pastorRole}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              welcome: { ...draft.welcome, pastorRole: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Button Label</Label>
+                        <Input
+                          value={draft.welcome.buttonText}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              welcome: { ...draft.welcome, buttonText: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ABOUT VABT EDITOR */}
+          <TabsContent value="about-vabt" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>About VABT Section</CardTitle>
+                  <CardDescription>
+                    Edit the church foundation, Seven Church Ages, mission statement, and End Time Revelation details.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="av-visible">Section Visible</Label>
+                  <Switch
+                    id="av-visible"
+                    checked={draft.aboutVabt.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        aboutVabt: { ...draft.aboutVabt, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Section Title</Label>
+                    <Input
+                      value={draft.aboutVabt.sectionTitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          aboutVabt: { ...draft.aboutVabt, sectionTitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Section Subtitle</Label>
+                    <Input
+                      value={draft.aboutVabt.sectionSubtitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          aboutVabt: { ...draft.aboutVabt, sectionSubtitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6 pt-4 border-t">
+                  {/* Card 1: Our Foundation */}
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="space-y-1.5">
+                        <Label>Foundation Heading</Label>
+                        <Input
+                          value={draft.aboutVabt.foundationTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                foundationTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Foundation Paragraph 1</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.aboutVabt.foundationParagraph1}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                foundationParagraph1: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Foundation Paragraph 2</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.aboutVabt.foundationParagraph2}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                foundationParagraph2: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Card 2: Our Mission */}
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="space-y-1.5">
+                        <Label>Mission Heading</Label>
+                        <Input
+                          value={draft.aboutVabt.missionTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                missionTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Mission Paragraph 1</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.aboutVabt.missionParagraph1}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                missionParagraph1: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Mission Paragraph 2</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.aboutVabt.missionParagraph2}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                missionParagraph2: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Card 3: Seven Church Ages */}
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="space-y-1.5">
+                        <Label>Seven Church Ages Heading</Label>
+                        <Input
+                          value={draft.aboutVabt.agesTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                agesTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Seven Church Ages Description</Label>
+                        <Textarea
+                          rows={4}
+                          value={draft.aboutVabt.agesDescription}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                agesDescription: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Card 4: End Time Revelation */}
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="space-y-1.5">
+                        <Label>End Time Revelation Heading</Label>
+                        <Input
+                          value={draft.aboutVabt.revelationTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                revelationTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>End Time Revelation Description</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.aboutVabt.revelationDescription}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                revelationDescription: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Revelation Image URL or Upload</Label>
+                        {draft.aboutVabt.revelationImage && (
+                          <div className="h-36 rounded-lg overflow-hidden border bg-muted mb-2">
+                            <img
+                              src={draft.aboutVabt.revelationImage}
+                              alt="End Time Revelation"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <Input
+                          value={draft.aboutVabt.revelationImage}
+                          placeholder="/william marrion branham.jpg or https://..."
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                revelationImage: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                        <label className="mt-1 inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload Revelation Image</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleImageUpload(file, (dataUrl) =>
+                                  setDraft({
+                                    ...draft,
+                                    aboutVabt: {
+                                      ...draft.aboutVabt,
+                                      revelationImage: dataUrl,
+                                    },
+                                  })
+                                );
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* 0. LIVE SERVICES ON YOUTUBE EDITOR */}
           <TabsContent value="live-services" className="space-y-6">
@@ -1793,7 +2369,331 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* 5. SETTINGS / PASSWORD CHANGE */}
+          {/* 5. CONTACT US EDITOR */}
+          <TabsContent value="contact" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Contact Us Section</CardTitle>
+                  <CardDescription>
+                    Edit address, phone numbers, email addresses, service times, map details, and visit/prayer cards.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="cu-visible">Section Visible</Label>
+                  <Switch
+                    id="cu-visible"
+                    checked={draft.contactUs.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        contactUs: { ...draft.contactUs, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Section Title</Label>
+                    <Input
+                      value={draft.contactUs.sectionTitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          contactUs: { ...draft.contactUs, sectionTitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Section Subtitle</Label>
+                    <Input
+                      value={draft.contactUs.sectionSubtitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          contactUs: { ...draft.contactUs, sectionSubtitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Contact Form Heading</Label>
+                    <Input
+                      value={draft.contactUs.formTitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          contactUs: { ...draft.contactUs, formTitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Contact Form Subtitle</Label>
+                    <Input
+                      value={draft.contactUs.formSubtitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          contactUs: { ...draft.contactUs, formSubtitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Info Cards */}
+                <div className="pt-4 border-t space-y-4">
+                  <h3 className="font-semibold text-lg">Contact Info Cards</h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {draft.contactUs.cards.map((card, index) => (
+                      <Card key={card.id || index} className="border">
+                        <CardContent className="p-4 space-y-3">
+                          <div className="space-y-1.5">
+                            <Label>Card Title</Label>
+                            <Input
+                              value={card.title}
+                              onChange={(e) =>
+                                updateContactCard(index, { title: e.target.value })
+                              }
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label>Details (one line per entry)</Label>
+                            <Textarea
+                              rows={4}
+                              value={card.details.join("\n")}
+                              onChange={(e) =>
+                                updateContactCard(index, {
+                                  details: e.target.value.split("\n"),
+                                })
+                              }
+                            />
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <Label>Button Label</Label>
+                              <Input
+                                value={card.actionLabel}
+                                onChange={(e) =>
+                                  updateContactCard(index, {
+                                    actionLabel: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label>Button Link (Optional)</Label>
+                              <Input
+                                value={card.actionLink || ""}
+                                placeholder="https://..., tel:..., mailto:..., or #events"
+                                onChange={(e) =>
+                                  updateContactCard(index, {
+                                    actionLink: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Map Section Settings */}
+                <div className="pt-4 border-t space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">Map / Find Us Card</h3>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="cu-map-visible">Show Map Card</Label>
+                      <Switch
+                        id="cu-map-visible"
+                        checked={draft.contactUs.showMap}
+                        onCheckedChange={(checked) =>
+                          setDraft({
+                            ...draft,
+                            contactUs: { ...draft.contactUs, showMap: checked },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label>Map Title</Label>
+                      <Input
+                        value={draft.contactUs.mapTitle}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            contactUs: { ...draft.contactUs, mapTitle: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>Map Subtitle</Label>
+                      <Input
+                        value={draft.contactUs.mapSubtitle}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            contactUs: { ...draft.contactUs, mapSubtitle: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>Google Maps Directions URL</Label>
+                      <Input
+                        value={draft.contactUs.directionsUrl}
+                        placeholder="https://maps.google.com/..."
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            contactUs: { ...draft.contactUs, directionsUrl: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visit & Prayer Cards */}
+                <div className="pt-4 border-t grid md:grid-cols-2 gap-6">
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">First Visit Card</h4>
+                      <div className="space-y-1.5">
+                        <Label>Heading</Label>
+                        <Input
+                          value={draft.contactUs.firstVisitTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              contactUs: {
+                                ...draft.contactUs,
+                                firstVisitTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Bullet Points (one per line)</Label>
+                        <Textarea
+                          rows={4}
+                          value={draft.contactUs.firstVisitPoints.join("\n")}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              contactUs: {
+                                ...draft.contactUs,
+                                firstVisitPoints: e.target.value.split("\n"),
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <h4 className="font-semibold">Need Prayer Card</h4>
+                      <div className="space-y-1.5">
+                        <Label>Heading</Label>
+                        <Input
+                          value={draft.contactUs.needPrayerTitle}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              contactUs: {
+                                ...draft.contactUs,
+                                needPrayerTitle: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>Description</Label>
+                        <Textarea
+                          rows={3}
+                          value={draft.contactUs.needPrayerDescription}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              contactUs: {
+                                ...draft.contactUs,
+                                needPrayerDescription: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label>Prayer Line</Label>
+                          <Input
+                            value={draft.contactUs.prayerLine}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                contactUs: {
+                                  ...draft.contactUs,
+                                  prayerLine: e.target.value,
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Prayer Email</Label>
+                          <Input
+                            value={draft.contactUs.prayerEmail}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                contactUs: {
+                                  ...draft.contactUs,
+                                  prayerEmail: e.target.value,
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>In Person Availability</Label>
+                        <Input
+                          value={draft.contactUs.prayerInPerson}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              contactUs: {
+                                ...draft.contactUs,
+                                prayerInPerson: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* 6. SETTINGS / PASSWORD CHANGE */}
           <TabsContent value="settings" className="space-y-6">
             <Card className="max-w-xl">
               <CardHeader>
