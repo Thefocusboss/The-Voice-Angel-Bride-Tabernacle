@@ -26,7 +26,7 @@ const Hero = () => {
           src="/hero-overlay.jpg"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover object-top opacity-45 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-45 pointer-events-none"
         />
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
