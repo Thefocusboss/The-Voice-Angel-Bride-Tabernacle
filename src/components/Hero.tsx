@@ -28,6 +28,13 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
         <div className="animate-fade-in">
+          {/* Church Logo */}
+          <img
+            src="/Logo.png"
+            alt="Voice Angel Bride Tabernacle Logo"
+            className="h-20 sm:h-24 md:h-28 w-auto mx-auto mb-4 sm:mb-6 drop-shadow-lg"
+          />
+
           {/* Main Heading */}
           <h1 className="hero-title mb-4 sm:mb-6 leading-tight">
              Welcome Home to 
