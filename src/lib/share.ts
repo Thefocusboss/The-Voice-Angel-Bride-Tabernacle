@@ -6,6 +6,7 @@ export interface SharePayload {
   shareType: "post" | "tonic" | "sermon" | "event" | "announcement";
   itemId: string;
   fallbackPath?: string;
+  overrideUrl?: string;
   imageUrl?: string;
   fileName?: string;
   copySuccessMessage?: string;
@@ -38,6 +39,7 @@ export const shareWithThumbnail = async ({
   shareType,
   itemId,
   fallbackPath = "/",
+  overrideUrl,
   imageUrl,
   fileName = "vabt-share",
   copySuccessMessage = "Share link copied to clipboard!",
@@ -47,9 +49,11 @@ export const shareWithThumbnail = async ({
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1";
 
-  const shareUrl = isLocal
-    ? `${origin}${fallbackPath}`
-    : `${origin}/share?type=${encodeURIComponent(shareType)}&id=${encodeURIComponent(itemId)}`;
+  const shareUrl = overrideUrl?.trim()
+    ? overrideUrl.trim()
+    : isLocal
+      ? `${origin}${fallbackPath}`
+      : `${origin}/share?type=${encodeURIComponent(shareType)}&id=${encodeURIComponent(itemId)}`;
 
   if (navigator.share) {
     if (imageUrl && navigator.canShare) {

@@ -1,64 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X, Calendar } from "lucide-react";
-import { useSiteData, MorningTonicItem, MorningTonicPostItem } from "@/lib/siteData";
+import { Book, Star, Globe, Clock, Play, Share2, Calendar } from "lucide-react";
+import { useSiteData, MorningTonicItem, MorningTonicPostItem, TELEGRAM_PAGE_URL } from "@/lib/siteData";
 import { shareWithThumbnail } from "@/lib/share";
-import { useState } from "react";
-import { toast } from "sonner";
-
-const getAudioStreamUrl = (link?: string): string | null => {
-  const trimmed = link?.trim();
-  if (!trimmed) return null;
-  if (/^https?:\/\/(?:t\.me|telegram\.me)\//i.test(trimmed)) {
-    return `/.netlify/functions/telegram-audio?url=${encodeURIComponent(trimmed)}`;
-  }
-  return trimmed;
-};
 
 const About = () => {
   const { data } = useSiteData();
   const { morningTonic } = data;
-  const [activeTonic, setActiveTonic] = useState<MorningTonicItem | null>(null);
-  const [streamError, setStreamError] = useState<string | null>(null);
 
-  const handleListenNow = async (podcast: MorningTonicItem) => {
-    const rawLink = podcast.link?.trim();
-    if (!rawLink) {
-      toast.info("Audio stream link has not been added for this Morning Tonic yet.");
-      return;
-    }
-
-    setStreamError(null);
-    setActiveTonic(podcast);
-
-    // Pre-check Telegram links so we can surface clear feedback if it's a private channel
-    if (/^https?:\/\/(?:t\.me|telegram\.me)\//i.test(rawLink)) {
-      try {
-        const probe = await fetch(
-          `/.netlify/functions/telegram-audio?url=${encodeURIComponent(rawLink)}`,
-          { method: "GET", headers: { Range: "bytes=0-1" } }
-        );
-        const contentType = probe.headers.get("content-type") || "";
-        if (!probe.ok && contentType.includes("application/json")) {
-          const errData = await probe.json();
-          setStreamError(
-            errData?.message ||
-              "Unable to stream this Telegram link directly. You can open it in Telegram below."
-          );
-        } else if (!probe.ok || contentType.includes("text/html")) {
-          setStreamError(
-            "Direct Telegram streaming is unavailable in this environment. Open in Telegram or use a direct MP3 URL."
-          );
-        }
-      } catch {
-        // Let the <audio> element attempt playback or trigger onError
-      }
-    }
+  const handleListenNow = (podcast: MorningTonicItem) => {
+    const targetUrl = podcast.link?.trim() || TELEGRAM_PAGE_URL;
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleShareTonic = (podcast: MorningTonicItem) => {
     const dateLabel = podcast.date ? ` (${podcast.date})` : "";
     const title = `Morning Tonic${dateLabel} — ${podcast.preacher}`;
+    const audioLink = podcast.link?.trim() || TELEGRAM_PAGE_URL;
     const shareText = `Listen to Morning Tonic${dateLabel} by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
     return shareWithThumbnail({
       title,
@@ -66,27 +24,30 @@ const About = () => {
       shareType: "tonic",
       itemId: podcast.id,
       fallbackPath: "/#about",
+      overrideUrl: audioLink,
       imageUrl: podcast.thumbnail,
       fileName: `morning-tonic-${podcast.id}`,
-      copySuccessMessage: "Morning Tonic link copied to clipboard!",
+      copySuccessMessage: "Morning Tonic Telegram audio link copied!",
     });
   };
 
   const handleSharePost = (post: MorningTonicPostItem) => {
     const title = post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle";
     const datePrefix = post.date ? `[${post.date}] ` : "";
+    const telegramPageUrl = post.link?.trim() || TELEGRAM_PAGE_URL;
     const text = post.description
-      ? `${datePrefix}${title}\n${post.description}`
-      : `${datePrefix}${title} - Voice Angel Bride Tabernacle`;
+      ? `${datePrefix}${title}\n${post.description}\nJoin our Telegram Page:`
+      : `${datePrefix}${title} - Voice Angel Bride Tabernacle\nJoin our Telegram Page:`;
     return shareWithThumbnail({
       title,
       text,
       shareType: "post",
       itemId: post.id,
       fallbackPath: "/#about",
+      overrideUrl: telegramPageUrl,
       imageUrl: post.image,
       fileName: `morning-tonic-post-${post.id}`,
-      copySuccessMessage: "Morning Tonic post link copied to clipboard!",
+      copySuccessMessage: "Morning Tonic post & Telegram link copied!",
     });
   };
 
@@ -302,70 +263,6 @@ const About = () => {
                 ))}
               </div>
             </div>
-
-            {/* Inline Audio Stream Player */}
-            {activeTonic && (
-              <div className="mt-8 p-5 rounded-xl bg-background border border-primary/30 shadow-md">
-                <div className="flex items-start justify-between gap-4 mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Volume2 className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{activeTonic.preacher}</p>
-                      {activeTonic.date && (
-                        <p className="text-xs text-muted-foreground">{activeTonic.date}</p>
-                      )}
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setActiveTonic(null);
-                      setStreamError(null);
-                    }}
-                    aria-label="Close audio player"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                {!streamError && getAudioStreamUrl(activeTonic.link) && (
-                  <audio
-                    key={activeTonic.id + activeTonic.link}
-                    controls
-                    autoPlay
-                    preload="metadata"
-                    className="w-full"
-                    src={getAudioStreamUrl(activeTonic.link) || undefined}
-                    onError={() =>
-                      setStreamError(
-                        "Unable to stream this audio directly in the browser. You can open the source link below."
-                      )
-                    }
-                  />
-                )}
-
-                {streamError && (
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
-                    <span>{streamError}</span>
-                    {activeTonic.link && (
-                      <Button
-                        size="sm"
-                        className="btn-primary py-2 px-4 text-sm gap-2 flex-shrink-0"
-                        onClick={() =>
-                          window.open(activeTonic.link, "_blank", "noopener,noreferrer")
-                        }
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Open in Telegram
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         )}
       </div>
