@@ -49,11 +49,11 @@ export default async (req) => {
       ];
       const post = posts.find((p) => p.id === id) || posts[0];
       if (post) {
+        const datePrefix = post.date ? `${post.date} — ` : "";
         meta = {
           title: post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle",
           description:
-            post.description ||
-            "Read, Reflect & Pray with Voice Angel Bride Tabernacle.",
+            `${datePrefix}${post.description || "Read, Reflect & Pray with Voice Angel Bride Tabernacle."}`,
           image: post.image || "/morning-tonic-post.jpg",
           redirect: "/#about",
         };
@@ -62,17 +62,18 @@ export default async (req) => {
       const items = siteData?.morningTonic?.items || [
         {
           id: "tonic-1",
-          title: "Daily Devotions with Pastor Michael",
-          description:
-            "Start your day with inspiring words from God's messenger",
+          date: "November 10, 2026",
+          preacher: "Rev. Michael Chuzie Chukwuezi",
           thumbnail: "/morning-tonic-telegram.jpg",
         },
       ];
       const item = items.find((t) => t.id === id) || items[0];
       if (item) {
+        const preacher = item.preacher || "Rev. Michael Chuzie Chukwuezi";
+        const dateText = item.date ? ` (${item.date})` : "";
         meta = {
-          title: `${item.title} — Morning Tonic`,
-          description: item.description || FALLBACK_META.description,
+          title: `Morning Tonic${dateText} — ${preacher}`,
+          description: `Listen to Morning Tonic${dateText} by ${preacher} at Voice Angel Bride Tabernacle.`,
           image: item.thumbnail || "/morning-tonic-telegram.jpg",
           redirect: "/#about",
         };

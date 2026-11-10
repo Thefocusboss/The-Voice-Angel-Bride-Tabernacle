@@ -6,6 +6,7 @@ import {
   UpcomingEventItem,
   LiveServiceItem,
   getYouTubeThumbnailUrl,
+  getFormattedToday,
 } from "@/lib/siteData";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -242,6 +243,7 @@ const Admin = () => {
       id: newId,
       title: "Daily Devotion — Read • Reflect • Pray",
       description: "Grow closer to God every day with Voice Angel Bride Tabernacle.",
+      date: getFormattedToday(),
       image: "/morning-tonic-post.jpg",
     };
     setDraft((prev) => ({
@@ -282,8 +284,7 @@ const Admin = () => {
     const newId = `tonic-${Date.now()}`;
     const newItem: MorningTonicItem = {
       id: newId,
-      title: "New Morning Tonic Series",
-      description: "Enter description for this teaching series",
+      date: getFormattedToday(),
       preacher: "Rev. Michael Chuzie Chukwuezi",
       thumbnail: "/morning-tonic-telegram.jpg",
       link: "",
@@ -980,6 +981,26 @@ const Admin = () => {
                         </div>
                         <CardContent className="p-4 space-y-3">
                           <div className="space-y-1.5">
+                            <Label>Date</Label>
+                            <div className="flex gap-2">
+                              <Input
+                                value={post.date || ""}
+                                placeholder="e.g. November 10, 2026"
+                                onChange={(e) => updateTonicPost(index, { date: e.target.value })}
+                              />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  updateTonicPost(index, { date: getFormattedToday() })
+                                }
+                              >
+                                Today
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="space-y-1.5">
                             <Label>Post Title (Optional)</Label>
                             <Input
                               value={post.title}
@@ -1067,10 +1088,11 @@ const Admin = () => {
                       <div className="relative h-44 bg-muted">
                         <img
                           src={item.thumbnail}
-                          alt={item.title}
+                          alt={`Morning Tonic - ${item.preacher}`}
                           className="w-full h-full object-cover"
                         />
                         <Button
+                          type="button"
                           variant="destructive"
                           size="icon"
                           className="absolute top-2 right-2 h-8 w-8"
@@ -1081,19 +1103,24 @@ const Admin = () => {
                       </div>
                       <CardContent className="p-4 space-y-4">
                         <div className="space-y-1.5">
-                          <Label>Title</Label>
-                          <Input
-                            value={item.title}
-                            onChange={(e) => updateTonicItem(index, { title: e.target.value })}
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label>Description</Label>
-                          <Textarea
-                            value={item.description}
-                            onChange={(e) => updateTonicItem(index, { description: e.target.value })}
-                            rows={2}
-                          />
+                          <Label>Date</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={item.date || ""}
+                              placeholder="e.g. November 10, 2026"
+                              onChange={(e) => updateTonicItem(index, { date: e.target.value })}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                updateTonicItem(index, { date: getFormattedToday() })
+                              }
+                            >
+                              Today
+                            </Button>
+                          </div>
                         </div>
                         <div className="space-y-1.5">
                           <Label>Preacher's Name</Label>
@@ -1124,7 +1151,7 @@ const Admin = () => {
                           <Label>Thumbnail URL or Upload</Label>
                           <Input
                             value={item.thumbnail}
-                            placeholder="/Pastor.jpg or https://..."
+                            placeholder="/morning-tonic-telegram.jpg or https://..."
                             onChange={(e) => updateTonicItem(index, { thumbnail: e.target.value })}
                           />
                           <label className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">

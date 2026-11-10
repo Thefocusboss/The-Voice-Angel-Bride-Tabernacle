@@ -4,17 +4,24 @@ export interface MorningTonicPostItem {
   id: string;
   title: string;
   description: string;
+  date: string;
   image: string;
 }
 
 export interface MorningTonicItem {
   id: string;
-  title: string;
-  description: string;
+  date: string;
   preacher: string;
   thumbnail: string;
   link?: string;
 }
+
+export const getFormattedToday = (): string =>
+  new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
 export interface UpcomingEventItem {
   id: string;
@@ -151,6 +158,7 @@ export const defaultSiteData: SiteData = {
         id: "post-1",
         title: "Daily Devotion — Read • Reflect • Pray",
         description: "Grow closer to God every day with Voice Angel Bride Tabernacle, Suleja.",
+        date: "November 10, 2026",
         image: "/morning-tonic-post.jpg",
       },
     ],
@@ -158,24 +166,21 @@ export const defaultSiteData: SiteData = {
     items: [
       {
         id: "tonic-1",
-        title: "Daily Devotions with Pastor Michael",
-        description: "Start your day with inspiring words from God's messenger",
+        date: "November 10, 2026",
         preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/morning-tonic-telegram.jpg",
         link: "https://t.me/c/2147639704/24862",
       },
       {
         id: "tonic-2",
-        title: "End Time Revelations",
-        description: "Deep dive into prophetic teachings and Bible mysteries",
+        date: "November 10, 2026",
         preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/morning-tonic-telegram.jpg",
         link: "",
       },
       {
         id: "tonic-3",
-        title: "Apostolic Faith Series",
-        description: "Foundational teachings on original apostolic beliefs",
+        date: "November 10, 2026",
         preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/morning-tonic-telegram.jpg",
         link: "",
@@ -299,7 +304,12 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
       ...parsed.morningTonic,
       postsHeading:
         parsed.morningTonic?.postsHeading || defaultSiteData.morningTonic.postsHeading,
-      posts: parsed.morningTonic?.posts || defaultSiteData.morningTonic.posts,
+      posts: (parsed.morningTonic?.posts || defaultSiteData.morningTonic.posts).map(
+        (post: MorningTonicPostItem) => ({
+          ...post,
+          date: post.date ?? "November 10, 2026",
+        })
+      ),
       telegramHeading:
         parsed.morningTonic?.telegramHeading ||
         defaultSiteData.morningTonic.telegramHeading,
@@ -312,7 +322,8 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
             "/morning-tonic.jpg",
           ];
           return {
-            ...item,
+            id: item.id,
+            date: item.date ?? "November 10, 2026",
             thumbnail: oldDefaults.includes(item.thumbnail)
               ? "/morning-tonic-telegram.jpg"
               : item.thumbnail,

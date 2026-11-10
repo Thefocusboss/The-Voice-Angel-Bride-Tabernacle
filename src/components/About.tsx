@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X } from "lucide-react";
+import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X, Calendar } from "lucide-react";
 import { useSiteData, MorningTonicItem, MorningTonicPostItem } from "@/lib/siteData";
 import { shareWithThumbnail } from "@/lib/share";
 import { useState } from "react";
@@ -57,9 +57,11 @@ const About = () => {
   };
 
   const handleShareTonic = (podcast: MorningTonicItem) => {
-    const shareText = `Listen to "${podcast.title}" by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
+    const dateLabel = podcast.date ? ` (${podcast.date})` : "";
+    const title = `Morning Tonic${dateLabel} — ${podcast.preacher}`;
+    const shareText = `Listen to Morning Tonic${dateLabel} by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
     return shareWithThumbnail({
-      title: podcast.title,
+      title,
       text: shareText,
       shareType: "tonic",
       itemId: podcast.id,
@@ -72,9 +74,10 @@ const About = () => {
 
   const handleSharePost = (post: MorningTonicPostItem) => {
     const title = post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle";
+    const datePrefix = post.date ? `[${post.date}] ` : "";
     const text = post.description
-      ? `${title}\n${post.description}`
-      : `${title} - Voice Angel Bride Tabernacle`;
+      ? `${datePrefix}${title}\n${post.description}`
+      : `${datePrefix}${title} - Voice Angel Bride Tabernacle`;
     return shareWithThumbnail({
       title,
       text,
@@ -213,6 +216,12 @@ const About = () => {
                         />
                       </div>
                       <CardContent className="p-4 sm:p-5 text-center">
+                        {post.date && (
+                          <div className="inline-flex items-center justify-center gap-1.5 text-xs font-medium text-primary mb-2">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{post.date}</span>
+                          </div>
+                        )}
                         {post.title && (
                           <h5 className="font-semibold text-base sm:text-lg mb-1">
                             {post.title}
@@ -255,7 +264,7 @@ const About = () => {
                     >
                       <img
                         src={podcast.thumbnail}
-                        alt={podcast.title}
+                        alt={`Morning Tonic - ${podcast.preacher}`}
                         className="w-full aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -264,9 +273,15 @@ const About = () => {
                       </div>
                     </div>
                     <CardContent className="p-5 sm:p-6 text-center">
-                      <h5 className="font-semibold text-lg mb-2">{podcast.title}</h5>
-                      <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
-                      <div className="text-primary font-semibold mb-4">{podcast.preacher}</div>
+                      {podcast.date && (
+                        <div className="inline-flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground mb-2">
+                          <Calendar className="w-3.5 h-3.5 text-primary" />
+                          <span>{podcast.date}</span>
+                        </div>
+                      )}
+                      <div className="text-primary font-semibold text-base sm:text-lg mb-4">
+                        {podcast.preacher}
+                      </div>
                       <Button
                         className="btn-secondary w-full"
                         onClick={() => handleListenNow(podcast)}
@@ -297,8 +312,10 @@ const About = () => {
                       <Volume2 className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">{activeTonic.title}</p>
-                      <p className="text-xs text-muted-foreground">{activeTonic.preacher}</p>
+                      <p className="font-semibold text-foreground">{activeTonic.preacher}</p>
+                      {activeTonic.date && (
+                        <p className="text-xs text-muted-foreground">{activeTonic.date}</p>
+                      )}
                     </div>
                   </div>
                   <Button
