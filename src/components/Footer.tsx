@@ -53,7 +53,7 @@ const Footer = () => {
           {/* Church Information */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
-              <img src="/Logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
+              <img src="/Logo.png" alt="VABT Ministries logo" className="h-8 w-auto flex-shrink-0" />
               <div>
                 <h3 className="font-bold text-lg">{footer.brandTitle}</h3>
                 <p className="text-sm text-background/80">{footer.brandSubtitle}</p>

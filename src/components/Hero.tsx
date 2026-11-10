@@ -11,8 +11,8 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-20 sm:pt-28 md:pt-32">
-      {/* Background Video */}
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-16 sm:pt-24 md:pt-28">
+      {/* Background Video & Overlay */}
       <div className="absolute inset-0 z-0">        
         <video
           className="w-full h-full object-cover"
@@ -22,18 +22,30 @@ const Hero = () => {
           loop
           playsInline
         />
+        <img
+          src="/hero-overlay.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-top opacity-45 pointer-events-none"
+        />
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
         <div className="animate-fade-in">
-          {/* Church Logo */}
-          <img
-            src="/Logo.png"
-            alt="Voice Angel Bride Tabernacle Logo"
-            className="h-32 sm:h-40 md:h-48 lg:h-52 w-auto mx-auto mb-5 sm:mb-6 drop-shadow-2xl"
-          />
+          {/* Church Logo with Soft Glow */}
+          <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 -inset-x-6 -inset-y-3 rounded-full bg-gradient-to-r from-primary-glow/45 via-white/35 to-secondary/40 blur-2xl sm:blur-3xl pointer-events-none"
+            />
+            <img
+              src="/Logo.png"
+              alt="Voice Angel Bride Tabernacle Logo"
+              className="relative z-10 h-28 sm:h-36 md:h-44 lg:h-52 max-w-[90vw] w-auto object-contain mx-auto drop-shadow-[0_0_24px_rgba(255,220,130,0.5)]"
+            />
+          </div>
 
           {/* Main Heading */}
           <h1 className="hero-title mb-4 sm:mb-6 leading-tight">
