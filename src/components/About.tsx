@@ -172,53 +172,107 @@ const About = () => {
           </div>
         </div>
 
-        {/* Morning Tonic Section - Moved from Sermons */}
+        {/* Morning Tonic Section - Two Parts: Post Section & Play from Telegram */}
         {morningTonic.visible && (
-          <div className="bg-card rounded-2xl p-4 sm:p-8 shadow-lg">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-4">{morningTonic.sectionTitle}</h3>
+          <div className="bg-card rounded-2xl p-4 sm:p-8 shadow-lg space-y-10 sm:space-y-12">
+            <div className="text-center">
+              <h3 className="text-2xl sm:text-3xl font-bold mb-3">{morningTonic.sectionTitle}</h3>
               <p className="text-muted-foreground">{morningTonic.sectionSubtitle}</p>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              {morningTonic.items.map((podcast, index) => (
-                <Card key={podcast.id || index} className="card-hover bg-background group overflow-hidden">
-                  <div
-                    className="relative cursor-pointer"
-                    onClick={() => handleListenNow(podcast)}
+
+            {/* Part 1: Portrait Post Section */}
+            {morningTonic.posts && morningTonic.posts.length > 0 && (
+              <div>
+                <h4 className="text-xl font-bold text-center mb-6">
+                  {morningTonic.postsHeading || "Daily Devotion Post"}
+                </h4>
+                <div
+                  className={
+                    morningTonic.posts.length === 1
+                      ? "max-w-sm mx-auto"
+                      : "grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  }
+                >
+                  {morningTonic.posts.map((post, index) => (
+                    <Card
+                      key={post.id || index}
+                      className="card-hover bg-background overflow-hidden"
+                    >
+                      <div className="overflow-hidden">
+                        <img
+                          src={post.image}
+                          alt={post.title || "Morning Tonic Post"}
+                          className="w-full aspect-[4/5] object-cover object-center"
+                        />
+                      </div>
+                      {(post.title || post.description) && (
+                        <CardContent className="p-4 sm:p-5 text-center">
+                          {post.title && (
+                            <h5 className="font-semibold text-base sm:text-lg mb-1">
+                              {post.title}
+                            </h5>
+                          )}
+                          {post.description && (
+                            <p className="text-muted-foreground text-sm">
+                              {post.description}
+                            </p>
+                          )}
+                        </CardContent>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Part 2: Play from Telegram Audio Cards */}
+            <div className="pt-4 border-t border-border/60">
+              <h4 className="text-xl font-bold text-center mb-6">
+                {morningTonic.telegramHeading || "Play from Telegram"}
+              </h4>
+              <div className="grid md:grid-cols-3 gap-6">
+                {morningTonic.items.map((podcast, index) => (
+                  <Card
+                    key={podcast.id || index}
+                    className="card-hover bg-background group overflow-hidden"
                   >
-                    <img
-                      src={podcast.thumbnail}
-                      alt={podcast.title}
-                      className="w-full aspect-[4/5] object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Play className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                  </div>
-                  <CardContent className="p-6 text-center">
-                    <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
-                    <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
-                    <div className="text-primary font-semibold mb-4">{podcast.preacher}</div>
-                    <Button
-                      className="btn-secondary w-full"
+                    <div
+                      className="relative cursor-pointer"
                       onClick={() => handleListenNow(podcast)}
                     >
-                      <Play className="w-4 h-4 mr-2" />
-                      Listen Now
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-2 gap-2"
-                      onClick={() => handleShareTonic(podcast)}
-                    >
-                      <Share2 className="w-4 h-4" />
-                      Share
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                      <img
+                        src={podcast.thumbnail}
+                        alt={podcast.title}
+                        className="w-full aspect-video object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
+                      </div>
+                    </div>
+                    <CardContent className="p-5 sm:p-6 text-center">
+                      <h5 className="font-semibold text-lg mb-2">{podcast.title}</h5>
+                      <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
+                      <div className="text-primary font-semibold mb-4">{podcast.preacher}</div>
+                      <Button
+                        className="btn-secondary w-full"
+                        onClick={() => handleListenNow(podcast)}
+                      >
+                        <Play className="w-4 h-4 mr-2" />
+                        Listen Now
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full mt-2 gap-2"
+                        onClick={() => handleShareTonic(podcast)}
+                      >
+                        <Share2 className="w-4 h-4" />
+                        Share
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             {/* Inline Audio Stream Player */}

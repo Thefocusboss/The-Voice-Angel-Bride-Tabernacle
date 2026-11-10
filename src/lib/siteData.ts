@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 
+export interface MorningTonicPostItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+}
+
 export interface MorningTonicItem {
   id: string;
   title: string;
@@ -65,6 +72,9 @@ export interface SiteData {
     visible: boolean;
     sectionTitle: string;
     sectionSubtitle: string;
+    postsHeading: string;
+    posts: MorningTonicPostItem[];
+    telegramHeading: string;
     items: MorningTonicItem[];
   };
   tithesAndOfferings: {
@@ -135,13 +145,23 @@ export const defaultSiteData: SiteData = {
     visible: true,
     sectionTitle: "Morning Tonic",
     sectionSubtitle: "Listen anytime, anywhere to our morning tonics",
+    postsHeading: "Daily Devotion Post",
+    posts: [
+      {
+        id: "post-1",
+        title: "Daily Devotion — Read • Reflect • Pray",
+        description: "Grow closer to God every day with Voice Angel Bride Tabernacle, Suleja.",
+        image: "/morning-tonic-post.jpg",
+      },
+    ],
+    telegramHeading: "Play from Telegram",
     items: [
       {
         id: "tonic-1",
         title: "Daily Devotions with Pastor Michael",
         description: "Start your day with inspiring words from God's messenger",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/morning-tonic.jpg",
+        thumbnail: "/morning-tonic-telegram.jpg",
         link: "https://t.me/c/2147639704/24862",
       },
       {
@@ -149,7 +169,7 @@ export const defaultSiteData: SiteData = {
         title: "End Time Revelations",
         description: "Deep dive into prophetic teachings and Bible mysteries",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/morning-tonic.jpg",
+        thumbnail: "/morning-tonic-telegram.jpg",
         link: "",
       },
       {
@@ -157,7 +177,7 @@ export const defaultSiteData: SiteData = {
         title: "Apostolic Faith Series",
         description: "Foundational teachings on original apostolic beliefs",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/morning-tonic.jpg",
+        thumbnail: "/morning-tonic-telegram.jpg",
         link: "",
       },
     ],
@@ -277,17 +297,24 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
     morningTonic: {
       ...defaultSiteData.morningTonic,
       ...parsed.morningTonic,
+      postsHeading:
+        parsed.morningTonic?.postsHeading || defaultSiteData.morningTonic.postsHeading,
+      posts: parsed.morningTonic?.posts || defaultSiteData.morningTonic.posts,
+      telegramHeading:
+        parsed.morningTonic?.telegramHeading ||
+        defaultSiteData.morningTonic.telegramHeading,
       items: (parsed.morningTonic?.items || defaultSiteData.morningTonic.items).map(
         (item: MorningTonicItem) => {
           const oldDefaults = [
             "/Pastor.jpg",
             "/Supernatural cloud huffman.jpg",
             "/Huffman christ.jpg",
+            "/morning-tonic.jpg",
           ];
           return {
             ...item,
             thumbnail: oldDefaults.includes(item.thumbnail)
-              ? "/morning-tonic.jpg"
+              ? "/morning-tonic-telegram.jpg"
               : item.thumbnail,
             preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
             link:

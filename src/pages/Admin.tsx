@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   useSiteData,
   MorningTonicItem,
+  MorningTonicPostItem,
   UpcomingEventItem,
   LiveServiceItem,
   getYouTubeThumbnailUrl,
@@ -225,7 +226,49 @@ const Admin = () => {
     reader.readAsDataURL(file);
   };
 
-  // Morning Tonic helpers
+  // Morning Tonic Post helpers
+  const updateTonicPost = (index: number, patch: Partial<MorningTonicPostItem>) => {
+    const posts = [...(draft.morningTonic.posts || [])];
+    posts[index] = { ...posts[index], ...patch };
+    setDraft((prev) => ({
+      ...prev,
+      morningTonic: { ...prev.morningTonic, posts },
+    }));
+  };
+
+  const addTonicPost = () => {
+    const newId = `post-${Date.now()}`;
+    const newPost: MorningTonicPostItem = {
+      id: newId,
+      title: "Daily Devotion — Read • Reflect • Pray",
+      description: "Grow closer to God every day with Voice Angel Bride Tabernacle.",
+      image: "/morning-tonic-post.jpg",
+    };
+    setDraft((prev) => ({
+      ...prev,
+      morningTonic: {
+        ...prev.morningTonic,
+        posts: [...(prev.morningTonic.posts || []), newPost],
+      },
+    }));
+    toast.success("New Morning Tonic post added! Edit its details below and click 'Save Changes'.");
+    setTimeout(() => {
+      document.getElementById(`admin-tonic-post-${newId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 50);
+  };
+
+  const removeTonicPost = (index: number) => {
+    const posts = (draft.morningTonic.posts || []).filter((_, i) => i !== index);
+    setDraft((prev) => ({
+      ...prev,
+      morningTonic: { ...prev.morningTonic, posts },
+    }));
+  };
+
+  // Morning Tonic Telegram Play Card helpers
   const updateTonicItem = (index: number, patch: Partial<MorningTonicItem>) => {
     const items = [...draft.morningTonic.items];
     items[index] = { ...items[index], ...patch };
@@ -242,7 +285,7 @@ const Admin = () => {
       title: "New Morning Tonic Series",
       description: "Enter description for this teaching series",
       preacher: "Rev. Michael Chuzie Chukwuezi",
-      thumbnail: "/morning-tonic.jpg",
+      thumbnail: "/morning-tonic-telegram.jpg",
       link: "",
     };
     setDraft((prev) => ({
@@ -883,12 +926,135 @@ const Admin = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <h3 className="font-semibold text-lg">Morning Tonic Items</h3>
-                  <Button type="button" onClick={addTonicItem} size="sm" className="gap-2">
-                    <Plus className="w-4 h-4" />
-                    Add Tonic Card
-                  </Button>
+                {/* Part 1: Portrait Post Section Editor */}
+                <div className="space-y-4 pt-4 border-t">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-semibold text-lg">Part 1: Morning Tonic Posts (Portrait)</h3>
+                      <p className="text-xs text-muted-foreground">
+                        Portrait devotion posters displayed without preacher name or listen button.
+                      </p>
+                    </div>
+                    <Button type="button" onClick={addTonicPost} size="sm" className="gap-2 w-full sm:w-auto">
+                      <Plus className="w-4 h-4" />
+                      Add Post
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2 max-w-md">
+                    <Label>Posts Subheading</Label>
+                    <Input
+                      value={draft.morningTonic.postsHeading || ""}
+                      placeholder="Daily Devotion Post"
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          morningTonic: { ...draft.morningTonic, postsHeading: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {(draft.morningTonic.posts || []).map((post, index) => (
+                      <Card
+                        key={post.id || index}
+                        id={`admin-tonic-post-${post.id || index}`}
+                        className="overflow-hidden border"
+                      >
+                        <div className="relative aspect-[4/5] bg-muted">
+                          <img
+                            src={post.image}
+                            alt={post.title || "Morning Tonic Post"}
+                            className="w-full h-full object-cover"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-8 w-8"
+                            onClick={() => removeTonicPost(index)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        <CardContent className="p-4 space-y-3">
+                          <div className="space-y-1.5">
+                            <Label>Post Title (Optional)</Label>
+                            <Input
+                              value={post.title}
+                              onChange={(e) => updateTonicPost(index, { title: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label>Caption / Description (Optional)</Label>
+                            <Textarea
+                              value={post.description}
+                              onChange={(e) =>
+                                updateTonicPost(index, { description: e.target.value })
+                              }
+                              rows={2}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label>Portrait Image URL or Upload</Label>
+                            <Input
+                              value={post.image}
+                              placeholder="/morning-tonic-post.jpg or https://..."
+                              onChange={(e) => updateTonicPost(index, { image: e.target.value })}
+                            />
+                            <label className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Upload Portrait Image</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    handleImageUpload(file, (dataUrl) =>
+                                      updateTonicPost(index, { image: dataUrl })
+                                    );
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Part 2: Play from Telegram Audio Cards Editor */}
+                <div className="space-y-4 pt-6 border-t">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-semibold text-lg">Part 2: Play from Telegram Cards</h3>
+                      <p className="text-xs text-muted-foreground">
+                        Audio cards with preacher's name, stream link, Listen Now, and Share buttons.
+                      </p>
+                    </div>
+                    <Button type="button" onClick={addTonicItem} size="sm" className="gap-2 w-full sm:w-auto">
+                      <Plus className="w-4 h-4" />
+                      Add Tonic Card
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2 max-w-md">
+                    <Label>Telegram Section Subheading</Label>
+                    <Input
+                      value={draft.morningTonic.telegramHeading || ""}
+                      placeholder="Play from Telegram"
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          morningTonic: { ...draft.morningTonic, telegramHeading: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6">
