@@ -44,17 +44,17 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-background">
+    <section id="contact" className="py-14 sm:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <h2 className="section-title">Contact Us</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
             We'd love to hear from you! Get in touch with us for prayer requests, questions, or to plan your visit.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12">
           {/* Contact Form */}
           <div>
             <Card className="shadow-lg">
@@ -128,10 +128,10 @@ const Contact = () => {
                       <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center flex-shrink-0">
                         <IconComponent className="w-6 h-6 text-primary-foreground" />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-lg mb-2">{info.title}</h3>
                         {info.details.map((detail, detailIndex) => (
-                          <p key={detailIndex} className="text-muted-foreground text-sm mb-1">
+                          <p key={detailIndex} className="text-muted-foreground text-sm mb-1 break-words">
                             {detail}
                           </p>
                         ))}
@@ -158,7 +158,7 @@ const Contact = () => {
             </CardHeader>
             <CardContent className="p-0">
               {/* Placeholder for map - you would integrate with Google Maps or similar */}
-              <div className="relative h-96 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
+              <div className="relative h-72 sm:h-96 px-4 bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
                 <div className="text-center">
                   <MapPin className="w-16 h-16 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Interactive Map</h3>

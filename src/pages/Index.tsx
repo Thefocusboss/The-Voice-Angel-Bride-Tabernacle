@@ -43,7 +43,7 @@ const Index = () => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navigation />
       <Hero />
       <Welcome />
@@ -58,9 +58,9 @@ const Index = () => {
       {/* Special Announcement Popup on Landing Page Load */}
       {specialAnnouncement.visible && (
         <Dialog open={announcementOpen} onOpenChange={setAnnouncementOpen}>
-          <DialogContent className="max-w-lg p-0 overflow-hidden border-primary/20">
+          <DialogContent className="w-[92vw] max-w-lg p-0 overflow-hidden border-primary/20 rounded-2xl">
             {specialAnnouncement.thumbnail && (
-              <div className="relative h-56 w-full bg-muted">
+              <div className="relative h-44 sm:h-56 w-full bg-muted">
                 <img
                   src={specialAnnouncement.thumbnail}
                   alt={specialAnnouncement.title}

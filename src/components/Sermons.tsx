@@ -12,19 +12,19 @@ const Sermons = () => {
   }
 
   return (
-    <section id="sermons" className="py-20 bg-background">
+    <section id="sermons" className="py-14 sm:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <h2 className="section-title">{liveServices.sectionTitle}</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
             {liveServices.sectionSubtitle}
           </p>
         </div>
 
         {/* Recent Sermons */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-bold mb-8 text-center">{liveServices.recentHeading}</h3>
+        <div className="mb-12 sm:mb-16">
+          <h3 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8 text-center">{liveServices.recentHeading}</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {liveServices.items.map((sermon) => (
               <Card key={sermon.id} className="card-hover group overflow-hidden">

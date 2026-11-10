@@ -236,20 +236,29 @@ const Admin = () => {
   };
 
   const addTonicItem = () => {
+    const newId = `tonic-${Date.now()}`;
     const newItem: MorningTonicItem = {
-      id: `tonic-${Date.now()}`,
+      id: newId,
       title: "New Morning Tonic Series",
       description: "Enter description for this teaching series",
       preacher: "Rev. Michael Chuzie Chukwuezi",
-      thumbnail: "/Pastor.jpg",
+      thumbnail: "/morning-tonic.jpg",
+      link: "",
     };
-    setDraft({
-      ...draft,
+    setDraft((prev) => ({
+      ...prev,
       morningTonic: {
-        ...draft.morningTonic,
-        items: [...draft.morningTonic.items, newItem],
+        ...prev.morningTonic,
+        items: [...(prev.morningTonic.items || []), newItem],
       },
-    });
+    }));
+    toast.success("New Morning Tonic card added! Edit its details below and click 'Save Changes'.");
+    setTimeout(() => {
+      document.getElementById(`admin-tonic-${newId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 50);
   };
 
   const removeTonicItem = (index: number) => {
@@ -435,38 +444,40 @@ const Admin = () => {
     <div className="min-h-screen bg-muted/50 pb-20">
       {/* Top Admin Header */}
       <header className="sticky top-0 z-50 bg-background border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-0 min-h-16 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-1.5 px-2 sm:px-3">
                 <ArrowLeft className="w-4 h-4" />
-                Back to Website
+                <span className="hidden sm:inline">Back to Website</span>
+                <span className="sm:hidden">Site</span>
               </Button>
             </Link>
             <div className="h-6 w-px bg-border" />
             <div className="flex items-center space-x-2">
-              <img src="/Logo.png" alt="VABT Logo" className="h-8 w-auto" />
-              <h1 className="text-lg font-bold">VABT Admin Dashboard</h1>
+              <img src="/Logo.png" alt="VABT Logo" className="h-7 sm:h-8 w-auto" />
+              <h1 className="text-sm sm:text-lg font-bold">VABT Admin</h1>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2">
             {hasUnsavedChanges && (
-              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
                 Unsaved changes
               </span>
             )}
-            <Button variant="outline" size="sm" onClick={handleReset} className="gap-2">
-              <RotateCcw className="w-4 h-4" />
-              Reset Defaults
+            <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs sm:text-sm">
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Reset Defaults</span>
+              <span className="sm:hidden">Reset</span>
             </Button>
-            <Button size="sm" onClick={handleSave} className="btn-primary py-2 px-4 text-sm gap-2">
-              <Save className="w-4 h-4" />
+            <Button size="sm" onClick={handleSave} className="btn-primary py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm gap-1.5">
+              <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Save Changes
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2 text-destructive hover:text-destructive">
-              <LogOut className="w-4 h-4" />
-              Logout
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-1.5 px-2 sm:px-3 text-destructive hover:text-destructive text-xs sm:text-sm">
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </div>
@@ -618,7 +629,7 @@ const Admin = () => {
 
         {/* Detailed Section Editors */}
         <Tabs defaultValue="live-services" className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full h-auto p-1 bg-background border">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-1 w-full h-auto p-1 bg-background border">
             <TabsTrigger value="live-services" className="py-3 gap-2">
               <Youtube className="w-4 h-4" />
               Live Services
@@ -874,7 +885,7 @@ const Admin = () => {
 
                 <div className="flex items-center justify-between pt-4 border-t">
                   <h3 className="font-semibold text-lg">Morning Tonic Items</h3>
-                  <Button onClick={addTonicItem} size="sm" className="gap-2">
+                  <Button type="button" onClick={addTonicItem} size="sm" className="gap-2">
                     <Plus className="w-4 h-4" />
                     Add Tonic Card
                   </Button>
@@ -882,7 +893,11 @@ const Admin = () => {
 
                 <div className="grid md:grid-cols-3 gap-6">
                   {draft.morningTonic.items.map((item, index) => (
-                    <Card key={item.id || index} className="overflow-hidden border">
+                    <Card
+                      key={item.id || index}
+                      id={`admin-tonic-${item.id || index}`}
+                      className="overflow-hidden border"
+                    >
                       <div className="relative h-44 bg-muted">
                         <img
                           src={item.thumbnail}
@@ -922,6 +937,20 @@ const Admin = () => {
                             value={item.preacher}
                             onChange={(e) =>
                               updateTonicItem(index, { preacher: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="flex items-center gap-1.5">
+                            <Link2 className="w-3.5 h-3.5 text-primary" />
+                            Audio / Stream Link
+                          </Label>
+                          <Input
+                            type="url"
+                            placeholder="https://... (.mp3, audio URL, or public t.me/channel/id)"
+                            value={item.link || ""}
+                            onChange={(e) =>
+                              updateTonicItem(index, { link: e.target.value })
                             }
                           />
                         </div>

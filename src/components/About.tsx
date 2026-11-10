@@ -1,29 +1,102 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Book, Star, Globe, Clock, Play } from "lucide-react";
-import { useSiteData } from "@/lib/siteData";
+import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X } from "lucide-react";
+import { useSiteData, MorningTonicItem } from "@/lib/siteData";
+import { useState } from "react";
+import { toast } from "sonner";
+
+const getAudioStreamUrl = (link?: string): string | null => {
+  const trimmed = link?.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\/(?:t\.me|telegram\.me)\//i.test(trimmed)) {
+    return `/.netlify/functions/telegram-audio?url=${encodeURIComponent(trimmed)}`;
+  }
+  return trimmed;
+};
 
 const About = () => {
   const { data } = useSiteData();
   const { morningTonic } = data;
+  const [activeTonic, setActiveTonic] = useState<MorningTonicItem | null>(null);
+  const [streamError, setStreamError] = useState<string | null>(null);
+
+  const handleListenNow = async (podcast: MorningTonicItem) => {
+    const rawLink = podcast.link?.trim();
+    if (!rawLink) {
+      toast.info("Audio stream link has not been added for this Morning Tonic yet.");
+      return;
+    }
+
+    setStreamError(null);
+    setActiveTonic(podcast);
+
+    // Pre-check Telegram links so we can surface clear feedback if it's a private channel
+    if (/^https?:\/\/(?:t\.me|telegram\.me)\//i.test(rawLink)) {
+      try {
+        const probe = await fetch(
+          `/.netlify/functions/telegram-audio?url=${encodeURIComponent(rawLink)}`,
+          { method: "GET", headers: { Range: "bytes=0-1" } }
+        );
+        const contentType = probe.headers.get("content-type") || "";
+        if (!probe.ok && contentType.includes("application/json")) {
+          const errData = await probe.json();
+          setStreamError(
+            errData?.message ||
+              "Unable to stream this Telegram link directly. You can open it in Telegram below."
+          );
+        } else if (!probe.ok || contentType.includes("text/html")) {
+          setStreamError(
+            "Direct Telegram streaming is unavailable in this environment. Open in Telegram or use a direct MP3 URL."
+          );
+        }
+      } catch {
+        // Let the <audio> element attempt playback or trigger onError
+      }
+    }
+  };
+
+  const handleShareTonic = async (podcast: MorningTonicItem) => {
+    const shareUrl = podcast.link?.trim() || `${window.location.origin}/#about`;
+    const shareText = `Listen to "${podcast.title}" by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: podcast.title,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        if ((err as Error)?.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast.success("Morning Tonic link copied to clipboard!");
+    } catch {
+      toast.error("Could not copy link. Please copy it manually from your browser.");
+    }
+  };
 
   return (
-    <section id="about" className="py-20 bg-muted">
+    <section id="about" className="py-14 sm:py-20 bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <h2 className="section-title">About VABT</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
             Learn about our history, mission, and the end-time message we proclaim to the world.
           </p>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-center mb-12 sm:mb-16">
           {/* Church History */}
           <div className="space-y-6">
             <Card className="card-hover">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <div className="flex items-center mb-4">
                   <Book className="w-6 h-6 text-primary mr-3" />
                   <h3 className="text-2xl font-bold">Our Foundation</h3>
@@ -42,10 +115,10 @@ const About = () => {
             </Card>
 
             <Card className="card-hover">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <div className="flex items-center mb-4">
                   <Star className="w-6 h-6 text-primary mr-3" />
-                  <h3 className="text-2xl font-bold">Seven Church Ages</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold">Seven Church Ages</h3>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
                   We believe the Gentiles were allotted seven church age dispensations before 
@@ -59,10 +132,10 @@ const About = () => {
           {/* Mission Statement */}
           <div className="space-y-6">
             <Card className="card-hover bg-gradient-to-br from-primary/5 to-secondary/5">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <div className="flex items-center mb-4">
                   <Globe className="w-6 h-6 text-primary mr-3" />
-                  <h3 className="text-2xl font-bold">Our Mission</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold">Our Mission</h3>
                 </div>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   As a Church, we stand unwavering and committed to the teachings of God's 
@@ -77,10 +150,10 @@ const About = () => {
             </Card>
 
             <Card className="card-hover">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <div className="flex items-center mb-4">
                   <Clock className="w-6 h-6 text-primary mr-3" />
-                  <h3 className="text-2xl font-bold">End Time Revelation</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold">End Time Revelation</h3>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
                   At the close of the seven church ages, we see Jesus standing at the door 
@@ -101,7 +174,7 @@ const About = () => {
 
         {/* Morning Tonic Section - Moved from Sermons */}
         {morningTonic.visible && (
-          <div className="bg-card rounded-2xl p-8 shadow-lg">
+          <div className="bg-card rounded-2xl p-4 sm:p-8 shadow-lg">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold mb-4">{morningTonic.sectionTitle}</h3>
               <p className="text-muted-foreground">{morningTonic.sectionSubtitle}</p>
@@ -110,11 +183,14 @@ const About = () => {
             <div className="grid md:grid-cols-3 gap-6">
               {morningTonic.items.map((podcast, index) => (
                 <Card key={podcast.id || index} className="card-hover bg-background group overflow-hidden">
-                  <div className="relative">
+                  <div
+                    className="relative cursor-pointer"
+                    onClick={() => handleListenNow(podcast)}
+                  >
                     <img
                       src={podcast.thumbnail}
                       alt={podcast.title}
-                      className="w-full aspect-[3/4] md:aspect-auto md:h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                      className="w-full aspect-[4/5] object-cover object-center group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -125,14 +201,87 @@ const About = () => {
                     <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
                     <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
                     <div className="text-primary font-semibold mb-4">{podcast.preacher}</div>
-                    <Button className="btn-secondary w-full">
+                    <Button
+                      className="btn-secondary w-full"
+                      onClick={() => handleListenNow(podcast)}
+                    >
                       <Play className="w-4 h-4 mr-2" />
                       Listen Now
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full mt-2 gap-2"
+                      onClick={() => handleShareTonic(podcast)}
+                    >
+                      <Share2 className="w-4 h-4" />
+                      Share
                     </Button>
                   </CardContent>
                 </Card>
               ))}
             </div>
+
+            {/* Inline Audio Stream Player */}
+            {activeTonic && (
+              <div className="mt-8 p-5 rounded-xl bg-background border border-primary/30 shadow-md">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Volume2 className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">{activeTonic.title}</p>
+                      <p className="text-xs text-muted-foreground">{activeTonic.preacher}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setActiveTonic(null);
+                      setStreamError(null);
+                    }}
+                    aria-label="Close audio player"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {!streamError && getAudioStreamUrl(activeTonic.link) && (
+                  <audio
+                    key={activeTonic.id + activeTonic.link}
+                    controls
+                    autoPlay
+                    preload="metadata"
+                    className="w-full"
+                    src={getAudioStreamUrl(activeTonic.link) || undefined}
+                    onError={() =>
+                      setStreamError(
+                        "Unable to stream this audio directly in the browser. You can open the source link below."
+                      )
+                    }
+                  />
+                )}
+
+                {streamError && (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
+                    <span>{streamError}</span>
+                    {activeTonic.link && (
+                      <Button
+                        size="sm"
+                        className="btn-primary py-2 px-4 text-sm gap-2 flex-shrink-0"
+                        onClick={() =>
+                          window.open(activeTonic.link, "_blank", "noopener,noreferrer")
+                        }
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Open in Telegram
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

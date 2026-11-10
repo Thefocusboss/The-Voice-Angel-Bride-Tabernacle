@@ -22,14 +22,14 @@ const Events = () => {
   };
 
   return (
-    <section id="events" className="py-20 bg-muted">
+    <section id="events" className="py-14 sm:py-20 bg-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {upcomingEvents.visible && (
           <>
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-10 sm:mb-16">
               <h2 className="section-title">{upcomingEvents.sectionTitle}</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-base sm:text-xl text-muted-foreground max-w-3xl mx-auto">
                 {upcomingEvents.sectionSubtitle}
               </p>
             </div>
@@ -96,10 +96,10 @@ const Events = () => {
         )}
 
         {/* Weekly Prayer Schedule */}
-        <div className="mt-16">
-          <h3 className="text-2xl font-bold text-center mb-8">Weekly prayer Schedule</h3>
-          <div className="bg-card rounded-2xl p-6 shadow-lg max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-4">
+        <div className="mt-12 sm:mt-16">
+          <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Weekly prayer Schedule</h3>
+          <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {[
                 { day: "Monday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
                 { day: "Tuesday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },

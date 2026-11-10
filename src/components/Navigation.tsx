@@ -28,10 +28,12 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 min-w-0 pr-2">
             {/* Replaced text badge with image logo from public folder */}
-            <img src="/logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
-            <span className="text-xl font-bold text-foreground">Voice Angel Bride Tabernacle</span>
+            <img src="/Logo.png" alt="VABT Ministries logo" className="h-9 sm:h-10 w-auto flex-shrink-0" />
+            <span className="text-base sm:text-xl font-bold text-foreground truncate">
+              Voice Angel Bride Tabernacle
+            </span>
           </div>
 
           {/* Desktop Navigation */}

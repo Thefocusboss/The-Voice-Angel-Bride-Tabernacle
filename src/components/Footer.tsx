@@ -28,12 +28,12 @@ const Footer = () => {
     <footer className="bg-foreground text-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="py-12 sm:py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Church Information */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
               {/* Replaced text badge with logo image */}
-              <img src="/logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
+              <img src="/Logo.png" alt="VABT Ministries logo" className="h-10 w-auto" />
               <div>
                 <h3 className="font-bold text-lg">Voice Angel Bride</h3>
                 <p className="text-sm text-background/80">Tabernacle Ministries</p>
@@ -157,12 +157,12 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-background/20 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-background/80 text-sm">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-4 h-4 text-primary" />
+            <div className="flex items-center justify-center md:justify-start space-x-2 text-center md:text-left">
+              <Heart className="w-4 h-4 text-primary flex-shrink-0" />
               <span>© {Math.max(2026, new Date().getFullYear())} Voice Angel Bride Tabernacle Ministries. All rights reserved.</span>
             </div>
             
-            <div className="flex space-x-6">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <Link to="/admin" className="hover:text-background transition-colors font-medium">Admin</Link>
               <button className="hover:text-background transition-colors">Privacy Policy</button>
               <button className="hover:text-background transition-colors">Terms of Service</button>

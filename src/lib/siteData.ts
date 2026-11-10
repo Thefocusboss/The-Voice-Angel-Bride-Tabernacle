@@ -141,21 +141,24 @@ export const defaultSiteData: SiteData = {
         title: "Daily Devotions with Pastor Michael",
         description: "Start your day with inspiring words from God's messenger",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/Pastor.jpg",
+        thumbnail: "/morning-tonic.jpg",
+        link: "https://t.me/c/2147639704/24862",
       },
       {
         id: "tonic-2",
         title: "End Time Revelations",
         description: "Deep dive into prophetic teachings and Bible mysteries",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/Supernatural cloud huffman.jpg",
+        thumbnail: "/morning-tonic.jpg",
+        link: "",
       },
       {
         id: "tonic-3",
         title: "Apostolic Faith Series",
         description: "Foundational teachings on original apostolic beliefs",
         preacher: "Rev. Michael Chuzie Chukwuezi",
-        thumbnail: "/Huffman christ.jpg",
+        thumbnail: "/morning-tonic.jpg",
+        link: "",
       },
     ],
   },
@@ -275,10 +278,26 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
       ...defaultSiteData.morningTonic,
       ...parsed.morningTonic,
       items: (parsed.morningTonic?.items || defaultSiteData.morningTonic.items).map(
-        (item: MorningTonicItem) => ({
-          ...item,
-          preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
-        })
+        (item: MorningTonicItem) => {
+          const oldDefaults = [
+            "/Pastor.jpg",
+            "/Supernatural cloud huffman.jpg",
+            "/Huffman christ.jpg",
+          ];
+          return {
+            ...item,
+            thumbnail: oldDefaults.includes(item.thumbnail)
+              ? "/morning-tonic.jpg"
+              : item.thumbnail,
+            preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
+            link:
+              item.link !== undefined
+                ? item.link
+                : item.id === "tonic-1"
+                  ? "https://t.me/c/2147639704/24862"
+                  : "",
+          };
+        }
       ),
     },
     tithesAndOfferings: {
