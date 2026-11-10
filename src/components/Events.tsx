@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2 } from "lucide-react";
 import { useSiteData } from "@/lib/siteData";
+import { shareWithThumbnail } from "@/lib/share";
 
 const Events = () => {
   const { data } = useSiteData();
@@ -84,8 +85,24 @@ const Events = () => {
                       <Button className="btn-secondary flex-1">
                         Learn More
                       </Button>
-                      <Button variant="outline" size="icon">
-                        <Users className="w-4 h-4" />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label={`Share ${event.title}`}
+                        onClick={() =>
+                          shareWithThumbnail({
+                            title: event.title,
+                            text: `${event.title} (${event.date} • ${event.time} • ${event.location}) - Voice Angel Bride Tabernacle`,
+                            shareType: "event",
+                            itemId: event.id,
+                            fallbackPath: "/#events",
+                            imageUrl: event.image,
+                            fileName: `vabt-event-${event.id}`,
+                            copySuccessMessage: "Event link copied to clipboard!",
+                          })
+                        }
+                      >
+                        <Share2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </CardContent>

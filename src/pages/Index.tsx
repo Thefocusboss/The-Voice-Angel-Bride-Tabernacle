@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { ArrowUp, Megaphone } from "lucide-react";
 import { useSiteData } from "@/lib/siteData";
+import { shareWithThumbnail } from "@/lib/share";
 import {
   Dialog,
   DialogContent,
@@ -92,9 +93,20 @@ const Index = () => {
                 <Button
                   variant="outline"
                   className="btn-secondary flex-1 py-2.5 text-base"
-                  onClick={() => setAnnouncementOpen(false)}
+                  onClick={() =>
+                    shareWithThumbnail({
+                      title: specialAnnouncement.title || "Special Announcement",
+                      text: `${specialAnnouncement.title}: ${specialAnnouncement.description}`,
+                      shareType: "announcement",
+                      itemId: "special",
+                      fallbackPath: "/",
+                      imageUrl: specialAnnouncement.thumbnail,
+                      fileName: "vabt-announcement",
+                      copySuccessMessage: "Announcement link copied to clipboard!",
+                    })
+                  }
                 >
-                  {specialAnnouncement.secondaryButtonText || "Dismiss"}
+                  {specialAnnouncement.secondaryButtonText || "Share Announcement"}
                 </Button>
               </div>
             </div>

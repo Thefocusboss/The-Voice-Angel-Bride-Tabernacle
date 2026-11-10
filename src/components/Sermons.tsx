@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Calendar, Clock } from "lucide-react";
+import { Play, Calendar, Clock, Share2 } from "lucide-react";
 import { useSiteData } from "@/lib/siteData";
+import { shareWithThumbnail } from "@/lib/share";
 
 const Sermons = () => {
   const { data } = useSiteData();
@@ -67,6 +68,25 @@ const Sermons = () => {
                     >
                       <Play className="w-4 h-4 mr-2" />
                       Watch
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label={`Share ${sermon.title}`}
+                      onClick={() =>
+                        shareWithThumbnail({
+                          title: sermon.title,
+                          text: `Watch "${sermon.title}" - Voice Angel Bride Tabernacle`,
+                          shareType: "sermon",
+                          itemId: String(sermon.id),
+                          fallbackPath: "/#sermons",
+                          imageUrl: sermon.thumbnail,
+                          fileName: `vabt-sermon-${sermon.id}`,
+                          copySuccessMessage: "Sermon link copied to clipboard!",
+                        })
+                      }
+                    >
+                      <Share2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </CardContent>

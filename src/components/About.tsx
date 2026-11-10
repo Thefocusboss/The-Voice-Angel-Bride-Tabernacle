@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Book, Star, Globe, Clock, Play, Share2, Volume2, ExternalLink, X } from "lucide-react";
 import { useSiteData, MorningTonicItem, MorningTonicPostItem } from "@/lib/siteData";
+import { shareWithThumbnail } from "@/lib/share";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -55,59 +56,35 @@ const About = () => {
     }
   };
 
-  const shareContent = async (
-    title: string,
-    text: string,
-    url: string,
-    successMessage: string
-  ) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-        return;
-      } catch (err) {
-        if ((err as Error)?.name === "AbortError") return;
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
-      toast.success(successMessage);
-    } catch {
-      toast.error("Could not copy link. Please copy it manually from your browser.");
-    }
-  };
-
   const handleShareTonic = (podcast: MorningTonicItem) => {
-    const shareUrl = podcast.link?.trim() || `${window.location.origin}/#about`;
     const shareText = `Listen to "${podcast.title}" by ${podcast.preacher} - Voice Angel Bride Tabernacle`;
-    return shareContent(podcast.title, shareText, shareUrl, "Morning Tonic link copied to clipboard!");
+    return shareWithThumbnail({
+      title: podcast.title,
+      text: shareText,
+      shareType: "tonic",
+      itemId: podcast.id,
+      fallbackPath: "/#about",
+      imageUrl: podcast.thumbnail,
+      fileName: `morning-tonic-${podcast.id}`,
+      copySuccessMessage: "Morning Tonic link copied to clipboard!",
+    });
   };
 
-  const handleSharePost = async (post: MorningTonicPostItem) => {
-    const shareUrl = `${window.location.origin}/#about`;
+  const handleSharePost = (post: MorningTonicPostItem) => {
     const title = post.title || "Morning Tonic Post — Voice Angel Bride Tabernacle";
     const text = post.description
       ? `${title}\n${post.description}`
       : `${title} - Voice Angel Bride Tabernacle`;
-
-    if (navigator.share && navigator.canShare && post.image) {
-      try {
-        const res = await fetch(post.image);
-        const blob = await res.blob();
-        const file = new File([blob], "morning-tonic-post.jpg", {
-          type: blob.type || "image/jpeg",
-        });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ title, text, url: shareUrl, files: [file] });
-          return;
-        }
-      } catch (err) {
-        if ((err as Error)?.name === "AbortError") return;
-      }
-    }
-
-    return shareContent(title, text, shareUrl, "Morning Tonic post link copied to clipboard!");
+    return shareWithThumbnail({
+      title,
+      text,
+      shareType: "post",
+      itemId: post.id,
+      fallbackPath: "/#about",
+      imageUrl: post.image,
+      fileName: `morning-tonic-post-${post.id}`,
+      copySuccessMessage: "Morning Tonic post link copied to clipboard!",
+    });
   };
 
   return (
