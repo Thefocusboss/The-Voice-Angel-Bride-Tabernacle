@@ -13,6 +13,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import {
@@ -80,6 +90,9 @@ const Admin = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
+
+  const hasUnsavedChanges = JSON.stringify(draft) !== JSON.stringify(data);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,25 +154,56 @@ const Admin = () => {
   };
 
   const handleSave = () => {
-    updateData(draft);
-    toast.success("Changes saved and published to the website!");
+    setConfirmSaveOpen(true);
+  };
+
+  const handleConfirmSave = () => {
+    try {
+      updateData(draft);
+      setConfirmSaveOpen(false);
+      toast.success("Changes saved and published to the website!");
+    } catch {
+      setConfirmSaveOpen(false);
+      toast.error(
+        "Failed to save changes. Uploaded images may exceed browser storage size—try using a smaller image or image URL."
+      );
+    }
   };
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to reset all sections back to their default content?")) {
-      resetData();
-      setDraft(JSON.parse(JSON.stringify(data)));
-      window.location.reload();
+      const defaults = resetData();
+      setDraft(defaults);
+      toast.success("All sections reset to default content.");
     }
   };
 
   const handleImageUpload = (file: File, onLoaded: (dataUrl: string) => void) => {
     const reader = new FileReader();
     reader.onload = () => {
-      if (typeof reader.result === "string") {
-        onLoaded(reader.result);
+      if (typeof reader.result !== "string") return;
+      const img = new Image();
+      img.onload = () => {
+        const maxWidth = 1000;
+        const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressed = canvas.toDataURL("image/jpeg", 0.82);
+          onLoaded(compressed);
+        } else {
+          onLoaded(reader.result as string);
+        }
         toast.success("Thumbnail image loaded! Click 'Save Changes' to publish.");
-      }
+      };
+      img.onerror = () => {
+        onLoaded(reader.result as string);
+        toast.success("Thumbnail image loaded! Click 'Save Changes' to publish.");
+      };
+      img.src = reader.result;
     };
     reader.readAsDataURL(file);
   };
@@ -179,7 +223,7 @@ const Admin = () => {
       id: `tonic-${Date.now()}`,
       title: "New Morning Tonic Series",
       description: "Enter description for this teaching series",
-      episodes: 1,
+      preacher: "Rev. Michael Chuzie Chukwuezi",
       thumbnail: "/Pastor.jpg",
     };
     setDraft({
@@ -390,6 +434,11 @@ const Admin = () => {
           </div>
 
           <div className="flex items-center space-x-3">
+            {hasUnsavedChanges && (
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                Unsaved changes
+              </span>
+            )}
             <Button variant="outline" size="sm" onClick={handleReset} className="gap-2">
               <RotateCcw className="w-4 h-4" />
               Reset Defaults
@@ -849,12 +898,13 @@ const Admin = () => {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label>Episodes Count</Label>
+                          <Label>Preacher's Name</Label>
                           <Input
-                            type="number"
-                            value={item.episodes}
+                            type="text"
+                            placeholder="Enter preacher's name"
+                            value={item.preacher}
                             onChange={(e) =>
-                              updateTonicItem(index, { episodes: Number(e.target.value) || 0 })
+                              updateTonicItem(index, { preacher: e.target.value })
                             }
                           />
                         </div>
@@ -1382,6 +1432,24 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Confirmation Dialog for Save Changes */}
+      <AlertDialog open={confirmSaveOpen} onOpenChange={setConfirmSaveOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Save Changes</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to save and publish your changes? All updates will immediately take effect on the website.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSave} className="bg-primary text-primary-foreground hover:bg-primary-glow">
+              Confirm & Save
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

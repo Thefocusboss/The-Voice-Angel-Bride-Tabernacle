@@ -114,7 +114,7 @@ const About = () => {
                     <img
                       src={podcast.thumbnail}
                       alt={podcast.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full aspect-[3/4] md:aspect-auto md:h-48 object-cover object-top group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -124,7 +124,7 @@ const About = () => {
                   <CardContent className="p-6 text-center">
                     <h4 className="font-semibold text-lg mb-2">{podcast.title}</h4>
                     <p className="text-muted-foreground text-sm mb-4">{podcast.description}</p>
-                    <div className="text-primary font-semibold mb-4">{podcast.episodes} Episodes</div>
+                    <div className="text-primary font-semibold mb-4">{podcast.preacher}</div>
                     <Button className="btn-secondary w-full">
                       <Play className="w-4 h-4 mr-2" />
                       Listen Now

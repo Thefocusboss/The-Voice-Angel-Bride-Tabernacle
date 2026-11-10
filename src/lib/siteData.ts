@@ -4,7 +4,7 @@ export interface MorningTonicItem {
   id: string;
   title: string;
   description: string;
-  episodes: number;
+  preacher: string;
   thumbnail: string;
   link?: string;
 }
@@ -140,21 +140,21 @@ export const defaultSiteData: SiteData = {
         id: "tonic-1",
         title: "Daily Devotions with Pastor Michael",
         description: "Start your day with inspiring words from God's messenger",
-        episodes: 127,
+        preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/Pastor.jpg",
       },
       {
         id: "tonic-2",
         title: "End Time Revelations",
         description: "Deep dive into prophetic teachings and Bible mysteries",
-        episodes: 89,
+        preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/Supernatural cloud huffman.jpg",
       },
       {
         id: "tonic-3",
         title: "Apostolic Faith Series",
         description: "Foundational teachings on original apostolic beliefs",
-        episodes: 156,
+        preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/Huffman christ.jpg",
       },
     ],
@@ -273,7 +273,16 @@ export const getSiteData = (): SiteData => {
     const parsed = JSON.parse(raw);
     return {
       liveServices: { ...defaultSiteData.liveServices, ...parsed.liveServices },
-      morningTonic: { ...defaultSiteData.morningTonic, ...parsed.morningTonic },
+      morningTonic: {
+        ...defaultSiteData.morningTonic,
+        ...parsed.morningTonic,
+        items: (parsed.morningTonic?.items || defaultSiteData.morningTonic.items).map(
+          (item: MorningTonicItem) => ({
+            ...item,
+            preacher: item.preacher || "Rev. Michael Chuzie Chukwuezi",
+          })
+        ),
+      },
       tithesAndOfferings: {
         ...defaultSiteData.tithesAndOfferings,
         ...parsed.tithesAndOfferings,
@@ -321,5 +330,11 @@ export const useSiteData = () => {
     saveSiteData(next);
   };
 
-  return { data, updateData, resetData: () => setData(resetSiteData()) };
+  const resetData = () => {
+    const defaults = resetSiteData();
+    setData(defaults);
+    return defaults;
+  };
+
+  return { data, updateData, resetData };
 };
