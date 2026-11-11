@@ -1361,6 +1361,111 @@ const Admin = () => {
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Special Salute to Apostle Joseph Coleman Card */}
+                <Card className="border">
+                  <CardContent className="p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold">Apostle Joseph Coleman Salute Card</h4>
+                      <div className="flex items-center space-x-2">
+                        <Label htmlFor="av-salute-visible">Show Card</Label>
+                        <Switch
+                          id="av-salute-visible"
+                          checked={draft.aboutVabt.showSalute}
+                          onCheckedChange={(checked) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: { ...draft.aboutVabt, showSalute: checked },
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-3 gap-4 items-start">
+                      <div className="space-y-2">
+                        <Label>Portrait Image</Label>
+                        {draft.aboutVabt.saluteImage && (
+                          <div className="h-44 rounded-lg overflow-hidden border bg-muted">
+                            <img
+                              src={draft.aboutVabt.saluteImage}
+                              alt="Apostle Joseph Coleman"
+                              className="w-full h-full object-cover object-top"
+                            />
+                          </div>
+                        )}
+                        <Input
+                          value={draft.aboutVabt.saluteImage}
+                          placeholder="/joseph-coleman.jpg or https://..."
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              aboutVabt: {
+                                ...draft.aboutVabt,
+                                saluteImage: e.target.value,
+                              },
+                            })
+                          }
+                        />
+                        <label className="inline-flex items-center gap-2 text-xs font-medium text-primary cursor-pointer hover:underline">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload Portrait Image</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleImageUpload(file, (dataUrl) =>
+                                  setDraft({
+                                    ...draft,
+                                    aboutVabt: {
+                                      ...draft.aboutVabt,
+                                      saluteImage: dataUrl,
+                                    },
+                                  })
+                                );
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
+                      <div className="md:col-span-2 space-y-3">
+                        <div className="space-y-1.5">
+                          <Label>Heading</Label>
+                          <Input
+                            value={draft.aboutVabt.saluteTitle}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                aboutVabt: {
+                                  ...draft.aboutVabt,
+                                  saluteTitle: e.target.value,
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label>Salute Write-up</Label>
+                          <Textarea
+                            rows={5}
+                            value={draft.aboutVabt.saluteDescription}
+                            onChange={(e) =>
+                              setDraft({
+                                ...draft,
+                                aboutVabt: {
+                                  ...draft.aboutVabt,
+                                  saluteDescription: e.target.value,
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>

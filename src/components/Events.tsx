@@ -115,12 +115,14 @@ const Events = () => {
         {/* Weekly Prayer Schedule */}
         <div className="mt-12 sm:mt-16">
           <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">Weekly prayer Schedule</h3>
-          <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg max-w-4xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
               {[
                 { day: "Monday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
                 { day: "Tuesday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
+                { day: "Wednesday", events: ["Morning: 5:30 AM - 6:30 AM"] },
                 { day: "Thursday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] },
+                { day: "Friday", events: ["Morning: 5:30 AM - 6:30 AM"] },
                 { day: "Saturday", events: ["Morning: 5:30 AM - 6:30 AM", "Evening: 6:00 PM - 7:00 PM"] }
               ].map((schedule, index) => (
                 <div key={index} className="text-center p-4 rounded-lg hover:bg-muted/50 transition-colors">

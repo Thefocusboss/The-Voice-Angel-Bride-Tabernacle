@@ -38,7 +38,7 @@ const Hero = () => {
           <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
             <div
               aria-hidden="true"
-              className="absolute inset-0 -inset-x-6 -inset-y-3 rounded-full bg-gradient-to-r from-primary-glow/45 via-white/35 to-secondary/40 blur-2xl sm:blur-3xl pointer-events-none"
+              className="absolute inset-0 -inset-x-6 -inset-y-3 rounded-full bg-gradient-to-r from-primary-glow/45 via-white/60 to-secondary/45 blur-2xl sm:blur-3xl pointer-events-none"
             />
             <img
               src="/Logo.png"

@@ -52,8 +52,10 @@ const Footer = () => {
         <div className="py-12 sm:py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Church Information */}
           <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-6">
-              <img src="/Logo.png" alt="VABT Ministries logo" className="h-8 w-auto flex-shrink-0" />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="bg-white/95 p-1.5 rounded-lg flex-shrink-0">
+                <img src="/Logo.png" alt="VABT Ministries logo" className="h-8 w-auto" />
+              </div>
               <div>
                 <h3 className="font-bold text-lg">{footer.brandTitle}</h3>
                 <p className="text-sm text-background/80">{footer.brandSubtitle}</p>

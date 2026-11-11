@@ -121,6 +121,10 @@ export interface SiteData {
     revelationTitle: string;
     revelationDescription: string;
     revelationImage: string;
+    showSalute: boolean;
+    saluteTitle: string;
+    saluteDescription: string;
+    saluteImage: string;
   };
   liveServices: {
     visible: boolean;
@@ -247,6 +251,11 @@ export const defaultSiteData: SiteData = {
     revelationDescription:
       "At the close of the seven church ages, we see Jesus standing at the door outside the church knocking to enter. The son of man is revealed to this Age through a prophetic office of the seventh angel messenger.",
     revelationImage: "/william marrion branham.jpg",
+    showSalute: true,
+    saluteTitle: "Special Salute to Apostle Joseph Coleman",
+    saluteDescription:
+      "Special salute to Apostle Joseph Coleman of New York City. As we believe that his ministry has so much been a blessing and is still a blessing to the bride of Jesus Christ. We are fully identified with him and we believe his labour of love will not go to waste.",
+    saluteImage: "/joseph-coleman.jpg",
   },
   liveServices: {
     visible: true,

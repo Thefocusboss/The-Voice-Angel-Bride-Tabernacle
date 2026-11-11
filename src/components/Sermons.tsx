@@ -101,7 +101,16 @@ const Sermons = () => {
           <p className="text-muted-foreground mb-6">
             Subscribe to receive notifications when new sermons and teachings are available.
           </p>
-          <Button className="btn-primary">
+          <Button
+            className="btn-primary"
+            onClick={() =>
+              window.open(
+                "https://youtube.com/@voiceangelbridetabernacle?si=rZGARCtPOkrCV7zF",
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }
+          >
             Subscribe to Updates
           </Button>
         </div>

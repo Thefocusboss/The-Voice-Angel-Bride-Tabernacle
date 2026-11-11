@@ -145,6 +145,41 @@ const About = () => {
                 </Card>
               </div>
             </div>
+
+            {/* Special Salute to Apostle Joseph Coleman */}
+            {aboutVabt.showSalute && (
+              <Card className="card-hover mb-12 sm:mb-16 overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
+                <CardContent className="p-5 sm:p-8">
+                  <div className="grid md:grid-cols-3 gap-6 sm:gap-8 items-center">
+                    {aboutVabt.saluteImage && (
+                      <div className="md:col-span-1 flex justify-center">
+                        <div className="w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden shadow-lg border border-primary/20">
+                          <img
+                            src={aboutVabt.saluteImage}
+                            alt={aboutVabt.saluteTitle || "Apostle Joseph Coleman"}
+                            className="w-full h-full object-cover object-top"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div
+                      className={
+                        aboutVabt.saluteImage
+                          ? "md:col-span-2 text-center md:text-left"
+                          : "md:col-span-3 text-center"
+                      }
+                    >
+                      <h3 className="text-xl sm:text-2xl font-bold mb-3">
+                        {aboutVabt.saluteTitle || "Special Salute to Apostle Joseph Coleman"}
+                      </h3>
+                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed whitespace-pre-line">
+                        {aboutVabt.saluteDescription}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </>
         )}
 
