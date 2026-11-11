@@ -125,6 +125,37 @@ export default async (req) => {
         image: fallbackThumb,
         redirect: "/",
       };
+    } else if (type === "blog") {
+      const blog = siteData?.blog || {};
+      const items = blog.items || [
+        {
+          id: "blog-1",
+          title: "Preparing the Bride for His Appearing",
+          content:
+            "Beloved in Christ, we are living in the closing hours of the Gentile dispensation. Stay anchored in the Word, walk in love, and let every revelation produce Christ-like character in our daily walk.",
+          thumbnail: "/Supernatural cloud.jpg",
+          date: "November 11, 2026",
+          timestamp: "9:00 AM",
+        },
+      ];
+      const defaultSig = blog.defaultSignature || "Rev Michael Chuzie";
+      const item = items.find((b) => String(b.id) === id) || items[0];
+      if (item) {
+        const signature = (item.signature || "").trim() || defaultSig;
+        const dateTime = [item.date, item.timestamp].filter(Boolean).join(" at ");
+        const excerpt = (item.content || "").trim().slice(0, 220);
+        const parts = [
+          dateTime ? `[${dateTime}]` : "",
+          excerpt,
+          signature ? `— ${signature}` : "",
+        ].filter(Boolean);
+        meta = {
+          title: `${item.title} — Voice Angel Bride Tabernacle`,
+          description: parts.join(" • ") || FALLBACK_META.description,
+          image: item.thumbnail || "/Supernatural cloud.jpg",
+          redirect: `/blog/${encodeURIComponent(item.id)}`,
+        };
+      }
     }
 
     // Serve base64-uploaded image directly so social scrapers receive real image bytes
@@ -168,7 +199,7 @@ export default async (req) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${escapeHtml(meta.title)}</title>
     <meta name="description" content="${escapeHtml(meta.description)}" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="${type === "blog" ? "article" : "website"}" />
     <meta property="og:title" content="${escapeHtml(meta.title)}" />
     <meta property="og:description" content="${escapeHtml(meta.description)}" />
     <meta property="og:image" content="${escapeHtml(ogImageUrl)}" />

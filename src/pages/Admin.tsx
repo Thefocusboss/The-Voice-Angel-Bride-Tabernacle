@@ -3,14 +3,17 @@ import {
   useSiteData,
   MorningTonicItem,
   MorningTonicPostItem,
+  BlogPostItem,
   UpcomingEventItem,
   LiveServiceItem,
   ExtraAnnouncementItem,
   ContactInfoCard,
   getYouTubeThumbnailUrl,
   getFormattedToday,
+  getFormattedCurrentTime,
   extractMapEmbedUrl,
 } from "@/lib/siteData";
+import { ADMIN_CRED_KEY, isAdminLoggedIn, setAdminLoggedIn } from "@/lib/adminAuth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,10 +55,10 @@ import {
   Heart,
   BookOpen,
   LayoutTemplate,
+  FileText,
+  Clock,
+  PenTool,
 } from "lucide-react";
-
-const ADMIN_CRED_KEY = "vabt_admin_credentials_v1";
-const ADMIN_SESSION_KEY = "vabt_admin_authenticated";
 
 interface AdminCredentials {
   username: string;
@@ -100,9 +103,7 @@ const Admin = () => {
   }, [data, draft]);
 
   // Auth state
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(isAdminLoggedIn);
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -122,7 +123,7 @@ const Admin = () => {
       loginUsername.trim() === creds.username &&
       loginPassword === creds.password
     ) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+      setAdminLoggedIn(true);
       setIsAuthenticated(true);
       setLoginPassword("");
       toast.success("Welcome back, Admin!");
@@ -132,7 +133,7 @@ const Admin = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    setAdminLoggedIn(false);
     setIsAuthenticated(false);
     setLoginUsername("");
     setLoginPassword("");
@@ -318,6 +319,51 @@ const Admin = () => {
       ...draft,
       morningTonic: { ...draft.morningTonic, items },
     });
+  };
+
+  // Blog Post helpers
+  const updateBlogPost = (index: number, patch: Partial<BlogPostItem>) => {
+    const items = [...(draft.blog.items || [])];
+    items[index] = { ...items[index], ...patch };
+    setDraft((prev) => ({
+      ...prev,
+      blog: { ...prev.blog, items },
+    }));
+  };
+
+  const addBlogPost = () => {
+    const newId = `blog-${Date.now()}`;
+    const newPost: BlogPostItem = {
+      id: newId,
+      title: "New Blog Post",
+      content: "Share pastoral teachings, reflections, or church updates here...",
+      thumbnail: "/Supernatural cloud.jpg",
+      date: getFormattedToday(),
+      timestamp: getFormattedCurrentTime(),
+      signature: "",
+    };
+    setDraft((prev) => ({
+      ...prev,
+      blog: {
+        ...prev.blog,
+        items: [newPost, ...(prev.blog.items || [])],
+      },
+    }));
+    toast.success("New blog post added! Edit its details and click 'Save Changes'.");
+    setTimeout(() => {
+      document.getElementById(`admin-blog-post-${newId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 50);
+  };
+
+  const removeBlogPost = (index: number) => {
+    const items = (draft.blog.items || []).filter((_, i) => i !== index);
+    setDraft((prev) => ({
+      ...prev,
+      blog: { ...prev.blog, items },
+    }));
   };
 
   // Upcoming Events helpers
@@ -663,6 +709,32 @@ const Admin = () => {
                 />
               </div>
 
+              {/* Blog Toggle */}
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
+                <div className="flex items-center space-x-3">
+                  {draft.blog.visible ? (
+                    <Eye className="w-5 h-5 text-primary" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )}
+                  <div>
+                    <p className="font-semibold text-sm">Blog</p>
+                    <p className="text-xs text-muted-foreground">
+                      {draft.blog.visible ? "Visible on site" : "Hidden"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={draft.blog.visible}
+                  onCheckedChange={(checked) =>
+                    setDraft({
+                      ...draft,
+                      blog: { ...draft.blog, visible: checked },
+                    })
+                  }
+                />
+              </div>
+
               {/* Tithes & Offerings Toggle */}
               <div className="flex items-center justify-between p-4 rounded-xl border bg-background">
                 <div className="flex items-center space-x-3">
@@ -866,6 +938,10 @@ const Admin = () => {
             <TabsTrigger value="morning-tonic" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Sparkles className="w-4 h-4" />
               Morning Tonic
+            </TabsTrigger>
+            <TabsTrigger value="blog" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
+              <FileText className="w-4 h-4" />
+              Blog
             </TabsTrigger>
             <TabsTrigger value="tithes" className="py-2.5 px-3 gap-2 flex-1 min-w-[130px]">
               <Church className="w-4 h-4" />
@@ -3127,6 +3203,256 @@ const Admin = () => {
                     </CardContent>
                   </Card>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* BLOG EDITOR */}
+          <TabsContent value="blog" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Blog &amp; Special Signature Settings</CardTitle>
+                  <CardDescription>
+                    Manage the Blog section title, subtitle, and the special signature displayed under every blog post and share link.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="blog-visible">Section Visible</Label>
+                  <Switch
+                    id="blog-visible"
+                    checked={draft.blog.visible}
+                    onCheckedChange={(checked) =>
+                      setDraft({
+                        ...draft,
+                        blog: { ...draft.blog, visible: checked },
+                      })
+                    }
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Section Title</Label>
+                    <Input
+                      value={draft.blog.sectionTitle}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          blog: { ...draft.blog, sectionTitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1.5">
+                      <PenTool className="w-3.5 h-3.5 text-primary" />
+                      Special Signature (Shown under every post)
+                    </Label>
+                    <Input
+                      value={draft.blog.defaultSignature}
+                      placeholder="Rev Michael Chuzie"
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          blog: { ...draft.blog, defaultSignature: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Section Subtitle</Label>
+                  <Input
+                    value={draft.blog.sectionSubtitle}
+                    onChange={(e) =>
+                      setDraft({
+                        ...draft,
+                        blog: { ...draft.blog, sectionSubtitle: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Blog Posts</CardTitle>
+                  <CardDescription>
+                    Add, update, or remove blog posts with thumbnail, date, timestamp, and optional signature override.
+                  </CardDescription>
+                </div>
+                <Button onClick={addBlogPost} className="btn-primary gap-1.5">
+                  <Plus className="w-4 h-4" />
+                  Add Blog Post
+                </Button>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {(!draft.blog.items || draft.blog.items.length === 0) && (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    No blog posts yet. Click "Add Blog Post" to publish your first update.
+                  </p>
+                )}
+                {(draft.blog.items || []).map((post, index) => (
+                  <Card
+                    key={post.id || index}
+                    id={`admin-blog-post-${post.id}`}
+                    className="border-primary/20 bg-muted/20"
+                  >
+                    <CardContent className="p-4 sm:p-6 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-primary">
+                          Blog Post #{index + 1}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeBlogPost(index)}
+                          className="text-destructive hover:text-destructive gap-1"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </Button>
+                      </div>
+
+                      <div className="grid md:grid-cols-3 gap-6">
+                        {/* Thumbnail Column */}
+                        <div className="space-y-3">
+                          <Label>Thumbnail Preview</Label>
+                          <div className="aspect-video rounded-xl overflow-hidden border bg-background">
+                            <img
+                              src={post.thumbnail || "/Supernatural cloud.jpg"}
+                              alt={post.title || `Blog post ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="text-xs">Thumbnail URL</Label>
+                            <Input
+                              value={post.thumbnail}
+                              placeholder="/Supernatural cloud.jpg or https://..."
+                              onChange={(e) =>
+                                updateBlogPost(index, { thumbnail: e.target.value })
+                              }
+                            />
+                          </div>
+                          <div>
+                            <Label
+                              htmlFor={`blog-thumb-upload-${post.id}`}
+                              className="inline-flex items-center gap-2 px-3 py-2 rounded-md border bg-background hover:bg-muted text-xs font-medium cursor-pointer"
+                            >
+                              <Upload className="w-3.5 h-3.5" />
+                              Upload Thumbnail Image
+                            </Label>
+                            <input
+                              id={`blog-thumb-upload-${post.id}`}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  handleImageUpload(file, (dataUrl) =>
+                                    updateBlogPost(index, { thumbnail: dataUrl })
+                                  );
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Content & Metadata Column */}
+                        <div className="md:col-span-2 space-y-4">
+                          <div className="space-y-1.5">
+                            <Label>Post Title</Label>
+                            <Input
+                              value={post.title}
+                              onChange={(e) =>
+                                updateBlogPost(index, { title: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <Label className="flex items-center gap-1.5">
+                                <Calendar className="w-3.5 h-3.5 text-primary" />
+                                Date
+                              </Label>
+                              <Input
+                                value={post.date}
+                                placeholder="November 11, 2026"
+                                onChange={(e) =>
+                                  updateBlogPost(index, { date: e.target.value })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="flex items-center gap-1.5">
+                                <Clock className="w-3.5 h-3.5 text-primary" />
+                                Timestamp
+                              </Label>
+                              <Input
+                                value={post.timestamp}
+                                placeholder="9:00 AM"
+                                onChange={(e) =>
+                                  updateBlogPost(index, { timestamp: e.target.value })
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="gap-1.5 text-xs"
+                              onClick={() => {
+                                updateBlogPost(index, {
+                                  date: getFormattedToday(),
+                                  timestamp: getFormattedCurrentTime(),
+                                });
+                                toast.success("Updated post date & timestamp to now!");
+                              }}
+                            >
+                              <Clock className="w-3.5 h-3.5" />
+                              Stamp Current Date &amp; Time
+                            </Button>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <Label>Blog Content</Label>
+                            <Textarea
+                              rows={6}
+                              value={post.content}
+                              onChange={(e) =>
+                                updateBlogPost(index, { content: e.target.value })
+                              }
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <Label className="flex items-center gap-1.5">
+                              <PenTool className="w-3.5 h-3.5 text-primary" />
+                              Custom Signature Override (Optional)
+                            </Label>
+                            <Input
+                              value={post.signature ?? ""}
+                              placeholder={`Leave blank to use default: "${draft.blog.defaultSignature || "Rev Michael Chuzie"}"`}
+                              onChange={(e) =>
+                                updateBlogPost(index, { signature: e.target.value })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, Mail, Phone, MapPin, Facebook, Twitter, Youtube, Instagram, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSiteData } from "@/lib/siteData";
+import { useAdminLoggedIn } from "@/lib/adminAuth";
 import { toast } from "sonner";
 
 const Footer = () => {
   const { data } = useSiteData();
   const { footer } = data;
+  const adminLoggedIn = useAdminLoggedIn();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   if (!footer.visible) {
     return null;
@@ -27,6 +31,10 @@ const Footer = () => {
   ];
 
   const scrollToSection = (href: string) => {
+    if (location.pathname !== "/" && location.pathname !== "/share") {
+      navigate(`/${href}`);
+      return;
+    }
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -217,7 +225,9 @@ const Footer = () => {
             </div>
             
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              <Link to="/admin" className="hover:text-background transition-colors font-medium">Admin</Link>
+              {adminLoggedIn && (
+                <Link to="/admin" className="hover:text-background transition-colors font-medium">Admin</Link>
+              )}
               <button className="hover:text-background transition-colors">Privacy Policy</button>
               <button className="hover:text-background transition-colors">Terms of Service</button>
               <button className="hover:text-background transition-colors">Accessibility</button>

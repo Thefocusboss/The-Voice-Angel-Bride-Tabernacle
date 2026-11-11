@@ -25,6 +25,23 @@ export const getFormattedToday = (): string =>
     year: "numeric",
   });
 
+export const getFormattedCurrentTime = (): string =>
+  new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+export interface BlogPostItem {
+  id: string;
+  title: string;
+  content: string;
+  thumbnail: string;
+  date: string;
+  timestamp: string;
+  signature?: string;
+}
+
 export interface UpcomingEventItem {
   id: string;
   title: string;
@@ -141,6 +158,13 @@ export interface SiteData {
     posts: MorningTonicPostItem[];
     telegramHeading: string;
     items: MorningTonicItem[];
+  };
+  blog: {
+    visible: boolean;
+    sectionTitle: string;
+    sectionSubtitle: string;
+    defaultSignature: string;
+    items: BlogPostItem[];
   };
   tithesAndOfferings: {
     visible: boolean;
@@ -332,6 +356,24 @@ export const defaultSiteData: SiteData = {
         preacher: "Rev. Michael Chuzie Chukwuezi",
         thumbnail: "/morning-tonic-telegram.jpg",
         link: "",
+      },
+    ],
+  },
+  blog: {
+    visible: true,
+    sectionTitle: "Blog & Pastoral Updates",
+    sectionSubtitle:
+      "Teachings, reflections, and prophetic updates for the Bride of Jesus Christ.",
+    defaultSignature: "Rev Michael Chuzie",
+    items: [
+      {
+        id: "blog-1",
+        title: "Preparing the Bride for His Appearing",
+        content:
+          "Beloved in Christ, we are living in the closing hours of the Gentile dispensation. Stay anchored in the Word, walk in love, and let every revelation produce Christ-like character in our daily walk.",
+        thumbnail: "/Supernatural cloud.jpg",
+        date: "November 11, 2026",
+        timestamp: "9:00 AM",
       },
     ],
   },
@@ -598,6 +640,13 @@ export const mergeSiteData = (parsed: Partial<SiteData> | null | undefined): Sit
     tithesAndOfferings: {
       ...defaultSiteData.tithesAndOfferings,
       ...parsed.tithesAndOfferings,
+    },
+    blog: {
+      ...defaultSiteData.blog,
+      ...parsed.blog,
+      defaultSignature:
+        parsed.blog?.defaultSignature ?? defaultSiteData.blog.defaultSignature,
+      items: parsed.blog?.items || defaultSiteData.blog.items,
     },
     upcomingEvents: {
       ...defaultSiteData.upcomingEvents,

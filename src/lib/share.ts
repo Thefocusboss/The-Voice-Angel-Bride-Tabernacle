@@ -3,7 +3,7 @@ import { toast } from "sonner";
 export interface SharePayload {
   title: string;
   text: string;
-  shareType: "post" | "tonic" | "sermon" | "event" | "announcement";
+  shareType: "post" | "tonic" | "sermon" | "event" | "announcement" | "blog";
   itemId: string;
   fallbackPath?: string;
   overrideUrl?: string;
@@ -11,6 +11,22 @@ export interface SharePayload {
   fileName?: string;
   copySuccessMessage?: string;
 }
+
+export const getShareUrl = ({
+  shareType,
+  itemId,
+  fallbackPath = "/",
+  overrideUrl,
+}: Pick<SharePayload, "shareType" | "itemId" | "fallbackPath" | "overrideUrl">): string => {
+  if (overrideUrl?.trim()) return overrideUrl.trim();
+  const origin = window.location.origin;
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  return isLocal
+    ? `${origin}${fallbackPath}`
+    : `${origin}/share?type=${encodeURIComponent(shareType)}&id=${encodeURIComponent(itemId)}`;
+};
 
 const dataUrlToFile = (dataUrl: string, fileName: string): File | null => {
   try {
@@ -66,16 +82,7 @@ export const shareWithThumbnail = async ({
   fileName = "vabt-share",
   copySuccessMessage = "Share link copied to clipboard!",
 }: SharePayload): Promise<void> => {
-  const origin = window.location.origin;
-  const isLocal =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
-
-  const shareUrl = overrideUrl?.trim()
-    ? overrideUrl.trim()
-    : isLocal
-      ? `${origin}${fallbackPath}`
-      : `${origin}/share?type=${encodeURIComponent(shareType)}&id=${encodeURIComponent(itemId)}`;
+  const shareUrl = getShareUrl({ shareType, itemId, fallbackPath, overrideUrl });
 
   if (navigator.share) {
     if (imageUrl && navigator.canShare) {

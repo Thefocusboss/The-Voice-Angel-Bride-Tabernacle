@@ -2,6 +2,7 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Welcome from "@/components/Welcome";
 import About from "@/components/About";
+import Blog from "@/components/Blog";
 import Sermons from "@/components/Sermons";
 import Events from "@/components/Events";
 import Ministries from "@/components/Ministries";
@@ -51,6 +52,7 @@ const Index = () => {
         tonic: "play-from-telegram",
         sermon: "sermons",
         event: "events",
+        blog: "blog",
       };
       targetId = typeMap[shareType] || "";
     }
@@ -87,6 +89,7 @@ const Index = () => {
       <Welcome />
       <Sermons />
       <About />
+      <Blog />
       <Events />
       <Ministries />
       <Donate />
